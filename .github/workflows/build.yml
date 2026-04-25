@@ -18,10 +18,10 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Publish
-      run: dotnet publish EroxUTILITY.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+      run: dotnet publish EroxUTILITY.csproj -c Release -r win-x64 --self-contained true
 
-    - name: Upload EXE
+    - name: Upload App
       uses: actions/upload-artifact@v4
       with:
         name: EroxUTILITY
-        path: bin/Release/net8.0-windows/win-x64/publish/*.exe
+        path: bin/Release/net8.0-windows/win-x64/publish/
