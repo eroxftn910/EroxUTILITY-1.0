@@ -1,11 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace EroxUTILITY
 {
@@ -55,7 +56,7 @@ namespace EroxUTILITY
                     psi = new ProcessStartInfo
                     {
                         FileName = "powershell.exe",
-                        Arguments = $"-ExecutionPolicy Bypass -File \"{tempPath}\"",
+                        Arguments = $"-NoExit -ExecutionPolicy Bypass -File \"{tempPath}\"",
                         Verb = "runas",
                         UseShellExecute = true
                     };
@@ -65,7 +66,7 @@ namespace EroxUTILITY
                     psi = new ProcessStartInfo
                     {
                         FileName = "cmd.exe",
-                        Arguments = $"/c \"{tempPath}\"",
+                        Arguments = $"/k \"{tempPath}\"",
                         Verb = "runas",
                         UseShellExecute = true
                     };
@@ -104,37 +105,57 @@ namespace EroxUTILITY
             {
                 Height = 78,
                 Margin = new Thickness(0, 0, 14, 14),
-                Background = System.Windows.Media.Brushes.Transparent,
+                Background = Brushes.Transparent,
                 BorderThickness = new Thickness(0),
                 Cursor = System.Windows.Input.Cursors.Hand
             };
 
-            btn.Content = new Border
+            Border card = new Border
             {
-                Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(67, 67, 67)),
+                Background = new SolidColorBrush(Color.FromRgb(67, 67, 67)),
                 CornerRadius = new CornerRadius(12),
-                BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(82, 82, 82)),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(82, 82, 82)),
                 BorderThickness = new Thickness(1),
-                Padding = new Thickness(18),
-                Child = new StackPanel
-                {
-                    Orientation = Orientation.Horizontal,
-                    Children =
-                    {
-                        new TextBlock { Text = icon, FontSize = 24, Width = 52, VerticalAlignment = VerticalAlignment.Center },
-                        new StackPanel
-                        {
-                            Children =
-                            {
-                                new TextBlock { Text = title, Foreground = System.Windows.Media.Brushes.White, FontSize = 15, FontWeight = FontWeights.Bold },
-                                new TextBlock { Text = subtitle, Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(190,190,190)), FontSize = 12 }
-                            }
-                        }
-                    }
-                }
+                Padding = new Thickness(18)
             };
 
+            StackPanel row = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            TextBlock iconBlock = new TextBlock
+            {
+                Text = icon,
+                FontSize = 24,
+                Width = 52,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            StackPanel texts = new StackPanel();
+
+            texts.Children.Add(new TextBlock
+            {
+                Text = title,
+                Foreground = Brushes.White,
+                FontSize = 15,
+                FontWeight = FontWeights.Bold
+            });
+
+            texts.Children.Add(new TextBlock
+            {
+                Text = subtitle,
+                Foreground = new SolidColorBrush(Color.FromRgb(190, 190, 190)),
+                FontSize = 12
+            });
+
+            row.Children.Add(iconBlock);
+            row.Children.Add(texts);
+            card.Child = row;
+            btn.Content = card;
+
             btn.Click += async (s, e) => await RunFromGitHub(path);
+
             return btn;
         }
 
@@ -146,18 +167,16 @@ namespace EroxUTILITY
 
         public void ShowHome(object sender, RoutedEventArgs e)
         {
-            PageTitle.Text = "Bienvenue sur ";
-            AccentTitle.Text = "Erox Utility";
-            PageSubtitle.Text = "Accès rapide à vos outils système";
+            PageTitle.Text = "Menu ";
+            AccentTitle.Text = "Windows";
+            PageSubtitle.Text = "Tweaks système Windows";
             Clear();
 
-            CardsLeft.Children.Add(Card("Réparation système", "SFC / DISM / DNS", "🛡️", "PowerPlan/Power.ps1"));
-            CardsLeft.Children.Add(Card("Fortnite", "Optimisation Fortnite", "🎮", "Jeux/Fortnite.ps1"));
-            CardsLeft.Children.Add(Card("FiveM", "Optimisation FiveM", "🚗", "Jeux/FiveMTool-Windows-Optimization.ps1"));
+            CardsLeft.Children.Add(Card("Device Cleanup", "Nettoyage périphériques", "🧹", "TWEAKS/Devices-Cleanup.ps1"));
+            CardsLeft.Children.Add(Card("Disabling Devices", "Device Manager", "🖥️", "TWEAKS/Disabling Devices (Device Manager).bat"));
 
-            CardsRight.Children.Add(Card("Valorant", "Optimisation Valorant", "🎯", "Jeux/ValorantTool-Windows-Optimization.ps1"));
-            CardsRight.Children.Add(Card("Fortnite Debloat", "Nettoyage Fortnite", "🧹", "Jeux/FortniteDebloatInstallation.ps1"));
-            CardsRight.Children.Add(Card("PowerPlan", "Plan alimentation", "⚡", "PowerPlan/Power.ps1"));
+            CardsRight.Children.Add(Card("Keyboard Optimizations", "Optimisations clavier registre", "⌨️", "TWEAKS/MainKeyboard-Optimizations-Registry (2).bat"));
+            CardsRight.Children.Add(Card("USB Power Saving", "Désactiver économie USB", "🔌", "TWEAKS/USBDisablePowerSaving (1).bat"));
         }
 
         public void ShowGames(object sender, RoutedEventArgs e)
@@ -182,6 +201,33 @@ namespace EroxUTILITY
             Clear();
 
             CardsLeft.Children.Add(Card("PowerPlan", "Appliquer le plan performance", "⚡", "PowerPlan/Power.ps1"));
+        }
+
+        public void ShowServices(object sender, RoutedEventArgs e)
+        {
+            PageTitle.Text = "Menu ";
+            AccentTitle.Text = "Services";
+            PageSubtitle.Text = "Gestion et confidentialité";
+            Clear();
+
+            CardsLeft.Children.Add(Card("Privacy Script", "Confidentialité Windows", "🔒", "Services/privacy-script.bat"));
+            CardsRight.Children.Add(Card("Services", "Optimisation services", "⚙️", "Services/services.cmd"));
+        }
+
+        public void ShowGPU(object sender, RoutedEventArgs e)
+        {
+            PageTitle.Text = "Menu ";
+            AccentTitle.Text = "GPU";
+            PageSubtitle.Text = "Optimisations Nvidia";
+            Clear();
+
+            CardsLeft.Children.Add(Card("Disable HDCP", "Désactiver HDCP", "🖥️", "GPU/Nvidia/!Disable HDCP.bat"));
+            CardsLeft.Children.Add(Card("Disable Telemetry", "Désactiver télémétrie Nvidia", "📡", "GPU/Nvidia/!Disable telemetry (Breaks Geforce).bat"));
+            CardsLeft.Children.Add(Card("No ECC", "Désactiver ECC", "🧩", "GPU/Nvidia/!No ECC.bat"));
+
+            CardsRight.Children.Add(Card("P-State 0", "Forcer performance GPU", "⚡", "GPU/Nvidia/!P-State 0.bat"));
+            CardsRight.Children.Add(Card("MPO Disable", "Désactiver MPO", "🛠️", "GPU/Nvidia/mpo disable.bat"));
+            CardsRight.Children.Add(Card("NVCleanstall", "Installer Nvidia propre", "🧼", "GPU/Nvidia/NVCleanstall_1.18.0.exe"));
         }
     }
 }
