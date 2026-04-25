@@ -1,0 +1,25 @@
+<Window x:Class="EroxUTILITY.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="EroxUTILITY"
+        Height="500" Width="800"
+        Background="#1E1E1E">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+            <TextBlock Text="EroxUTILITY"
+                       Foreground="Orange"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+
+            <Button Content="🔥 Optimiser mon PC"
+                    Width="220"
+                    Height="55"
+                    Margin="0,25,0,0"
+                    Click="Optimize_Click"/>
+
+        </StackPanel>
+    </Grid>
+</Window>
