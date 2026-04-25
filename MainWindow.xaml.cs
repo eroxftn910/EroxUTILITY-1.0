@@ -1,17 +1,11 @@
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace EroxUTILITY
 {
     public partial class MainWindow : Window
     {
-        string baseUrl = "https://raw.githubusercontent.com/eroxftn910/EroxUTILITY-1.0/main/";
-
         public MainWindow()
         {
             InitializeComponent();
@@ -20,110 +14,56 @@ namespace EroxUTILITY
 
         void Log(string msg)
         {
-            LogBox.AppendText($"[{DateTime.Now:HH:mm:ss}] {msg}\n");
-            LogBox.ScrollToEnd();
+            LogsBox.Text += msg + "\n";
         }
 
-        async Task RunScript(string path)
+        void RunScript(string path)
         {
-            try
+            if (!File.Exists(path))
             {
-                Log("Téléchargement : " + path);
-
-                string url = baseUrl + Uri.EscapeDataString(path);
-                string temp = Path.Combine(Path.GetTempPath(), Path.GetFileName(path));
-
-                using HttpClient client = new HttpClient();
-                string content = await client.GetStringAsync(url);
-                await File.WriteAllTextAsync(temp, content);
-
-                Log("Lancement : " + path);
-
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "powershell.exe",
-                    Arguments = $"-ExecutionPolicy Bypass -File \"{temp}\"",
-                    Verb = "runas",
-                    UseShellExecute = true
-                });
+                Log("Fichier introuvable: " + path);
+                return;
             }
-            catch (Exception ex)
+
+            Process.Start(new ProcessStartInfo()
             {
-                Log("Erreur : " + ex.Message);
-            }
+                FileName = "powershell.exe",
+                Arguments = "-ExecutionPolicy Bypass -File \"" + path + "\"",
+                Verb = "runas"
+            });
+
+            Log("Lancé: " + path);
         }
 
-        Button CreateButton(string text, string path)
+        // MENUS
+        private void MenuHome(object sender, RoutedEventArgs e)
         {
-            Button btn = new Button
-            {
-                Content = text,
-                Margin = new Thickness(10),
-                Height = 45
-            };
-
-            btn.Click += async (s, e) => await RunScript(path);
-
-            return btn;
+            Log("Menu Home");
         }
 
-        void ClearUI()
+        private void MenuWindows(object sender, RoutedEventArgs e)
         {
-            MainContent.Children.Clear();
+            RunScript("scripts/windows/Devices-Cleanup.ps1");
         }
 
-        public void ShowWindows(object sender, RoutedEventArgs e)
+        private void MenuGames(object sender, RoutedEventArgs e)
         {
-            ClearUI();
-            StackPanel panel = new StackPanel();
-
-            panel.Children.Add(CreateButton("Device Cleanup", "Windows/Devices-Cleanup.ps1"));
-            panel.Children.Add(CreateButton("Disable Devices", "Windows/Disabling Devices (Device Manager).bat"));
-
-            MainContent.Children.Add(panel);
+            RunScript("scripts/games/Fortnite.ps1");
         }
 
-        public void ShowGames(object sender, RoutedEventArgs e)
+        private void MenuPower(object sender, RoutedEventArgs e)
         {
-            ClearUI();
-            StackPanel panel = new StackPanel();
-
-            panel.Children.Add(CreateButton("Fortnite", "Jeux/FortniteDebloat.ps1"));
-            panel.Children.Add(CreateButton("Valorant", "Jeux/ValorantTool.ps1"));
-
-            MainContent.Children.Add(panel);
+            RunScript("scripts/powerplan/Power.ps1");
         }
 
-        public void ShowPower(object sender, RoutedEventArgs e)
+        private void MenuServices(object sender, RoutedEventArgs e)
         {
-            ClearUI();
-            StackPanel panel = new StackPanel();
-
-            panel.Children.Add(CreateButton("PowerPlan", "PowerPlan/powerplan.ps1"));
-
-            MainContent.Children.Add(panel);
+            RunScript("scripts/services/services.cmd");
         }
 
-        public void ShowServices(object sender, RoutedEventArgs e)
+        private void MenuGPU(object sender, RoutedEventArgs e)
         {
-            ClearUI();
-            StackPanel panel = new StackPanel();
-
-            panel.Children.Add(CreateButton("Services", "Services/services.cmd"));
-            panel.Children.Add(CreateButton("Privacy Script", "Services/privacy-script.bat"));
-
-            MainContent.Children.Add(panel);
-        }
-
-        public void ShowGPU(object sender, RoutedEventArgs e)
-        {
-            ClearUI();
-            StackPanel panel = new StackPanel();
-
-            panel.Children.Add(CreateButton("Disable HDCP", "GPU/Nvidia/Disable HDCP.bat"));
-            panel.Children.Add(CreateButton("Disable Telemetry", "GPU/Nvidia/Disable telemetry.bat"));
-
-            MainContent.Children.Add(panel);
+            RunScript("scripts/gpu/nvidia/Disable-HDCP.bat");
         }
     }
 }
