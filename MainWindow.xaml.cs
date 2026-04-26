@@ -17,8 +17,8 @@ namespace EroxUTILITY
         public MainWindow()
         {
             InitializeComponent();
-            ShowWindows(null, null);
-            Log("EroxUTILITY lancé");
+            ShowHome(null, null);
+            Log("E-TWEAKS lancé");
         }
 
         private string EncodePath(string path)
@@ -36,6 +36,19 @@ namespace EroxUTILITY
         {
             try
             {
+                if (path.StartsWith("http://") || path.StartsWith("https://"))
+                {
+                    Log("Ouverture : " + path);
+
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = path,
+                        UseShellExecute = true
+                    });
+
+                    return;
+                }
+
                 string url = BaseUrl + EncodePath(path);
                 string tempPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(path));
 
@@ -102,42 +115,56 @@ namespace EroxUTILITY
         {
             Button btn = new Button
             {
-                Height = 78,
-                Margin = new Thickness(0, 0, 14, 14),
+                Height = 64,
+                Margin = new Thickness(0, 0, 0, 10),
                 Background = Brushes.Transparent,
                 BorderThickness = new Thickness(0),
-                Cursor = System.Windows.Input.Cursors.Hand
+                Cursor = System.Windows.Input.Cursors.Hand,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch
             };
 
             Border card = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(67, 67, 67)),
-                CornerRadius = new CornerRadius(12),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(82, 82, 82)),
+                Background = new SolidColorBrush(Color.FromRgb(76, 76, 76)),
+                CornerRadius = new CornerRadius(10),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(92, 92, 92)),
                 BorderThickness = new Thickness(1),
-                Padding = new Thickness(18)
+                Padding = new Thickness(14)
             };
 
-            StackPanel row = new StackPanel
+            Grid row = new Grid();
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(46) });
+            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            Border iconBg = new Border
             {
-                Orientation = Orientation.Horizontal
+                Width = 34,
+                Height = 34,
+                Background = new SolidColorBrush(Color.FromRgb(84, 84, 84)),
+                CornerRadius = new CornerRadius(8),
+                VerticalAlignment = VerticalAlignment.Center
             };
 
             TextBlock iconBlock = new TextBlock
             {
                 Text = icon,
-                FontSize = 24,
-                Width = 52,
+                FontSize = 16,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
 
-            StackPanel texts = new StackPanel();
+            iconBg.Child = iconBlock;
+
+            StackPanel texts = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
 
             texts.Children.Add(new TextBlock
             {
                 Text = title,
                 Foreground = Brushes.White,
-                FontSize = 15,
+                FontSize = 14,
                 FontWeight = FontWeights.Bold
             });
 
@@ -145,10 +172,14 @@ namespace EroxUTILITY
             {
                 Text = subtitle,
                 Foreground = new SolidColorBrush(Color.FromRgb(190, 190, 190)),
-                FontSize = 12
+                FontSize = 11,
+                Margin = new Thickness(0, 2, 0, 0)
             });
 
-            row.Children.Add(iconBlock);
+            Grid.SetColumn(iconBg, 0);
+            Grid.SetColumn(texts, 1);
+
+            row.Children.Add(iconBg);
             row.Children.Add(texts);
 
             card.Child = row;
@@ -167,7 +198,18 @@ namespace EroxUTILITY
 
         public void ShowHome(object sender, RoutedEventArgs e)
         {
-            ShowWindows(sender, e);
+            PageTitle.Text = "Bienvenue sur ";
+            AccentTitle.Text = "E-TWEAKS";
+            PageSubtitle.Text = "Accès rapide à vos outils système";
+            Clear();
+
+            CardsLeft.Children.Add(Card("AnyDesk", "Bureau à distance", "💻", "Accueil/AnyDesk.exe"));
+            CardsLeft.Children.Add(Card("Regedit", "Éditeur de registre", "🧾", "Accueil/Regedit.bat"));
+            CardsLeft.Children.Add(Card("Disque", "Gestion des disques", "💽", "Accueil/Disk.bat"));
+
+            CardsRight.Children.Add(Card("Gestionnaire", "Tâches Windows", "📊", "Accueil/TaskManager.bat"));
+            CardsRight.Children.Add(Card("UserDiag", "Diagnostic utilisateur", "👤", "Accueil/UserDiag.exe"));
+            CardsRight.Children.Add(Card("Nettoyage", "Disque Windows", "🧹", "Accueil/Cleanmgr.bat"));
         }
 
         public void ShowWindows(object sender, RoutedEventArgs e)
@@ -225,17 +267,23 @@ namespace EroxUTILITY
         public void ShowGPU(object sender, RoutedEventArgs e)
         {
             PageTitle.Text = "Menu ";
-            AccentTitle.Text = "GPU";
+            AccentTitle.Text = "Nvidia";
             PageSubtitle.Text = "Optimisations Nvidia";
             Clear();
 
-            CardsLeft.Children.Add(Card("Disable HDCP", "Désactiver HDCP", "🖥️", "GPU/Nvidia/!Disable HDCP.bat"));
-            CardsLeft.Children.Add(Card("Disable Telemetry", "Désactiver télémétrie Nvidia", "📡", "GPU/Nvidia/!Disable telemetry (Breaks Geforce).bat"));
-            CardsLeft.Children.Add(Card("No ECC", "Désactiver ECC", "🧩", "GPU/Nvidia/!No ECC.bat"));
+            CardsLeft.Children.Add(Card(
+                "Disable Telemetry",
+                "Désactiver télémétrie Nvidia",
+                "📡",
+                "GPU/Nvidia/!Disable telemetry (Breaks Geforce).bat"
+            ));
 
-            CardsRight.Children.Add(Card("P-State 0", "Forcer performance GPU", "⚡", "GPU/Nvidia/!P-State 0.bat"));
-            CardsRight.Children.Add(Card("MPO Disable", "Désactiver MPO", "🛠️", "GPU/Nvidia/mpo disable.bat"));
-            CardsRight.Children.Add(Card("NVCleanstall", "Installer Nvidia propre", "🧼", "GPU/Nvidia/NVCleanstall_1.18.0.exe"));
+            CardsRight.Children.Add(Card(
+                "NVCleanstall",
+                "Télécharger NVCleanstall",
+                "🧼",
+                "https://www.techpowerup.com/download/techpowerup-nvcleanstall/"
+            ));
         }
     }
 }
