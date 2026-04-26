@@ -17,7 +17,7 @@ namespace EroxUTILITY
         public MainWindow()
         {
             InitializeComponent();
-            ShowHome(null, null);
+            ShowWindows(null, null);
             Log("EroxUTILITY lancé");
         }
 
@@ -167,16 +167,24 @@ namespace EroxUTILITY
 
         public void ShowHome(object sender, RoutedEventArgs e)
         {
+            ShowWindows(sender, e);
+        }
+
+        public void ShowWindows(object sender, RoutedEventArgs e)
+        {
             PageTitle.Text = "Menu ";
             AccentTitle.Text = "Windows";
-            PageSubtitle.Text = "Tweaks système Windows";
+            PageSubtitle.Text = "Scripts Windows";
             Clear();
 
-            CardsLeft.Children.Add(Card("Device Cleanup", "Nettoyage périphériques", "🧹", "Windows/Devices-Cleanup.ps1"));
+            CardsLeft.Children.Add(Card("Devices Cleanup", "Nettoyage périphériques", "🧹", "Windows/Devices-Cleanup.ps1"));
             CardsLeft.Children.Add(Card("Disabling Devices", "Device Manager", "🖥️", "Windows/Disabling Devices (Device Manager).bat"));
+            CardsLeft.Children.Add(Card("Keyboard Optimizations", "Optimisations clavier registre", "⌨️", "Windows/MainKeyboard-Optimizations-Registry (2).bat"));
+            CardsLeft.Children.Add(Card("System Profile Tasks", "Post Processing Registry", "🧩", "Windows/SystemProfileTasksDisplayPostProcessing.reg"));
 
-            CardsRight.Children.Add(Card("Keyboard Optimizations", "Optimisations clavier registre", "⌨️", "Windows/MainKeyboard-Optimizations-Registry (2).bat"));
             CardsRight.Children.Add(Card("USB Power Saving", "Désactiver économie USB", "🔌", "Windows/USBDisablePowerSaving (1).bat"));
+            CardsRight.Children.Add(Card("Uninstall", "Script désinstallation", "🗑️", "Windows/UNINSTALL.bat"));
+            CardsRight.Children.Add(Card("Services", "Optimisation services Windows", "⚙️", "Windows/services.cmd"));
         }
 
         public void ShowGames(object sender, RoutedEventArgs e)
