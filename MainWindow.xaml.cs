@@ -48,7 +48,6 @@ namespace EroxUTILITY
                 Log("Lancement admin : " + path);
 
                 string ext = Path.GetExtension(path).ToLower();
-
                 ProcessStartInfo psi;
 
                 if (ext == ".ps1")
@@ -151,6 +150,7 @@ namespace EroxUTILITY
 
             row.Children.Add(iconBlock);
             row.Children.Add(texts);
+
             card.Child = row;
             btn.Content = card;
 
@@ -172,11 +172,11 @@ namespace EroxUTILITY
             PageSubtitle.Text = "Tweaks système Windows";
             Clear();
 
-            CardsLeft.Children.Add(Card("Device Cleanup", "Nettoyage périphériques", "🧹", "TWEAKS/Devices-Cleanup.ps1"));
-            CardsLeft.Children.Add(Card("Disabling Devices", "Device Manager", "🖥️", "TWEAKS/Disabling Devices (Device Manager).bat"));
+            CardsLeft.Children.Add(Card("Device Cleanup", "Nettoyage périphériques", "🧹", "Windows/Devices-Cleanup.ps1"));
+            CardsLeft.Children.Add(Card("Disabling Devices", "Device Manager", "🖥️", "Windows/Disabling Devices (Device Manager).bat"));
 
-            CardsRight.Children.Add(Card("Keyboard Optimizations", "Optimisations clavier registre", "⌨️", "TWEAKS/MainKeyboard-Optimizations-Registry (2).bat"));
-            CardsRight.Children.Add(Card("USB Power Saving", "Désactiver économie USB", "🔌", "TWEAKS/USBDisablePowerSaving (1).bat"));
+            CardsRight.Children.Add(Card("Keyboard Optimizations", "Optimisations clavier registre", "⌨️", "Windows/MainKeyboard-Optimizations-Registry (2).bat"));
+            CardsRight.Children.Add(Card("USB Power Saving", "Désactiver économie USB", "🔌", "Windows/USBDisablePowerSaving (1).bat"));
         }
 
         public void ShowGames(object sender, RoutedEventArgs e)
