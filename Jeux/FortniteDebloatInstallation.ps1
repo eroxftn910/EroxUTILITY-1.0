@@ -206,7 +206,7 @@ function insoptiDebloat {
     
     switch ($insoptiChoice) { 
         "1" {
-            # Continue avec le débloat
+            # Continue avec le débloat - rien à faire ici, on sort du switch
         }
         "2" { 
             exit 
@@ -255,6 +255,7 @@ function insoptiDebloat {
             $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
             Clear-Host
             insoptiDebloat
+            return
         }
         default { 
             echo ""
@@ -266,9 +267,11 @@ function insoptiDebloat {
             Start-Sleep 2
             Clear-Host
             insoptiDebloat
+            return
         }
     }
     
+    # Si on arrive ici, c'est que l'utilisateur a choisi "1" (Debloat)
     # Début du processus de débloat
     Clear-Host
     insopti_ShowWarningMessage
@@ -332,6 +335,7 @@ function insoptiDebloat {
                 insoptiLog " Fortnite directory not found on drive ${insoptiDriveLetter}" -HighlightColor Red
                 Start-Sleep 2
                 insoptiMain
+                return
             }
         } catch {
             Write-Host " [" -NoNewline -ForegroundColor Darkgray
@@ -347,6 +351,7 @@ function insoptiDebloat {
             Start-Sleep 4
             Clear-Host
             insoptiDebloat
+            return
         }
     } else {
         Write-Host " [" -NoNewline -ForegroundColor Darkgray
@@ -357,6 +362,7 @@ function insoptiDebloat {
         Start-Sleep 3
         Clear-Host
         insoptiDebloat
+        return
     }
     
     # Commencer le nettoyage
