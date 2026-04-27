@@ -39,13 +39,11 @@ namespace EroxUTILITY
                 if (path.StartsWith("http://") || path.StartsWith("https://"))
                 {
                     Log("Ouverture : " + path);
-
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = path,
                         UseShellExecute = true
                     });
-
                     return;
                 }
 
@@ -200,16 +198,16 @@ namespace EroxUTILITY
         {
             PageTitle.Text = "Bienvenue sur ";
             AccentTitle.Text = "E-TWEAKS";
-            PageSubtitle.Text = "Accès rapide à vos outils système";
+            PageSubtitle.Text = "Installateurs rapides";
             Clear();
 
-            CardsLeft.Children.Add(Card("AnyDesk", "Bureau à distance", "💻", "Accueil/AnyDesk.exe"));
-            CardsLeft.Children.Add(Card("Regedit", "Éditeur de registre", "🧾", "Accueil/Regedit.bat"));
-            CardsLeft.Children.Add(Card("Disque", "Gestion des disques", "💽", "Accueil/Disk.bat"));
+            CardsLeft.Children.Add(Card("AnyDesk", "Installer AnyDesk", "💻", "Home/Anydesk.ps1"));
+            CardsLeft.Children.Add(Card("Discord", "Installer Discord", "💬", "Home/Discord.ps1"));
+            CardsLeft.Children.Add(Card("Epic Games", "Installer Epic Games", "🎮", "Home/EpicGames.ps1"));
 
-            CardsRight.Children.Add(Card("Gestionnaire", "Tâches Windows", "📊", "Accueil/TaskManager.bat"));
-            CardsRight.Children.Add(Card("UserDiag", "Diagnostic utilisateur", "👤", "Accueil/UserDiag.exe"));
-            CardsRight.Children.Add(Card("Nettoyage", "Disque Windows", "🧹", "Accueil/Cleanmgr.bat"));
+            CardsRight.Children.Add(Card("Google Chrome", "Installer Google Chrome", "🌐", "Home/Google.ps1"));
+            CardsRight.Children.Add(Card("Spotify", "Installer Spotify", "🎵", "Home/Spotify.ps1"));
+            CardsRight.Children.Add(Card("UserDiag", "Installer UserDiag", "👤", "Home/Userdiag.ps1"));
         }
 
         public void ShowWindows(object sender, RoutedEventArgs e)
@@ -271,19 +269,9 @@ namespace EroxUTILITY
             PageSubtitle.Text = "Optimisations Nvidia";
             Clear();
 
-            CardsLeft.Children.Add(Card(
-                "Disable Telemetry",
-                "Désactiver télémétrie Nvidia",
-                "📡",
-                "GPU/Nvidia/!Disable telemetry (Breaks Geforce).bat"
-            ));
+            CardsLeft.Children.Add(Card("Disable Telemetry", "Désactiver télémétrie Nvidia", "📡", "GPU/Nvidia/!Disable telemetry (Breaks Geforce).bat"));
 
-            CardsRight.Children.Add(Card(
-                "NVCleanstall",
-                "Télécharger NVCleanstall",
-                "🧼",
-                "https://www.techpowerup.com/download/techpowerup-nvcleanstall/"
-            ));
+            CardsRight.Children.Add(Card("NVCleanstall", "Télécharger NVCleanstall", "🧼", "https://www.techpowerup.com/download/techpowerup-nvcleanstall/"));
         }
     }
 }
