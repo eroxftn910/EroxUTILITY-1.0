@@ -1,277 +1,237 @@
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace EroxUTILITY
+namespace E_TWEAKS
 {
     public partial class MainWindow : Window
     {
-        private const string BaseUrl = "https://raw.githubusercontent.com/eroxftn910/EroxUTILITY-1.0/main/";
+        private readonly string ScriptFolder = "Scripts";
 
         public MainWindow()
         {
             InitializeComponent();
-            ShowHome(null, null);
-            Log("E-TWEAKS lancé");
+            LoadHome();
         }
 
-        private string EncodePath(string path)
+        private void SetActive(Button activeButton)
         {
-            return string.Join("/", path.Split('/').Select(Uri.EscapeDataString));
+            BtnHome.Style = (Style)FindResource("MenuButton");
+            BtnWindows.Style = (Style)FindResource("MenuButton");
+            BtnJeux.Style = (Style)FindResource("MenuButton");
+            BtnPowerPlan.Style = (Style)FindResource("MenuButton");
+            BtnServices.Style = (Style)FindResource("MenuButton");
+            BtnNvidia.Style = (Style)FindResource("MenuButton");
+            BtnSettings.Style = (Style)FindResource("MenuButton");
+
+            activeButton.Style = (Style)FindResource("ActiveMenuButton");
         }
 
-        private void Log(string message)
+        private void ClearCards()
         {
-            LogsBox.AppendText($"[{DateTime.Now:HH:mm:ss}] {message}\n");
-            LogsBox.ScrollToEnd();
+            CardsGrid.Children.Clear();
         }
 
-        private async Task RunFromGitHub(string path)
+        private void AddCard(string icon, string title, string subtitle, string scriptName)
+        {
+            Button card = new Button
+            {
+                Style = (Style)FindResource("ActionCard"),
+                Tag = scriptName
+            };
+
+            StackPanel panel = new StackPanel();
+
+            TextBlock iconText = new TextBlock
+            {
+                Text = icon,
+                FontSize = 34,
+                Foreground = new SolidColorBrush(Color.FromRgb(177, 92, 255)),
+                Margin = new Thickness(0, 0, 0, 18)
+            };
+
+            TextBlock titleText = new TextBlock
+            {
+                Text = title,
+                FontSize = 17,
+                FontWeight = FontWeights.Bold,
+                Foreground = Brushes.White
+            };
+
+            TextBlock subtitleText = new TextBlock
+            {
+                Text = subtitle,
+                FontSize = 13,
+                Foreground = new SolidColorBrush(Color.FromRgb(169, 164, 199)),
+                Margin = new Thickness(0, 6, 0, 0)
+            };
+
+            panel.Children.Add(iconText);
+            panel.Children.Add(titleText);
+            panel.Children.Add(subtitleText);
+
+            card.Content = panel;
+            card.Click += Card_Click;
+
+            CardsGrid.Children.Add(card);
+        }
+
+        private void Card_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string scriptName)
+            {
+                RunScript(scriptName);
+            }
+        }
+
+        private void RunScript(string scriptName)
         {
             try
             {
-                if (path.StartsWith("http://") || path.StartsWith("https://"))
+                string scriptPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ScriptFolder, scriptName);
+
+                if (!System.IO.File.Exists(scriptPath))
                 {
-                    Log("Ouverture : " + path);
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = path,
-                        UseShellExecute = true
-                    });
+                    MessageBox.Show($"Script introuvable :\n{scriptPath}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                string url = BaseUrl + EncodePath(path);
-                string tempPath = Path.Combine(Path.GetTempPath(), Path.GetFileName(path));
-
-                Log("Téléchargement : " + path);
-
-                using HttpClient client = new HttpClient();
-                byte[] data = await client.GetByteArrayAsync(url);
-                await File.WriteAllBytesAsync(tempPath, data);
-
-                Log("Lancement admin : " + path);
-
-                string ext = Path.GetExtension(path).ToLower();
-                ProcessStartInfo psi;
-
-                if (ext == ".ps1")
+                ProcessStartInfo psi = new ProcessStartInfo
                 {
-                    psi = new ProcessStartInfo
-                    {
-                        FileName = "powershell.exe",
-                        Arguments = $"-NoExit -ExecutionPolicy Bypass -File \"{tempPath}\"",
-                        Verb = "runas",
-                        UseShellExecute = true
-                    };
-                }
-                else if (ext == ".bat" || ext == ".cmd")
-                {
-                    psi = new ProcessStartInfo
-                    {
-                        FileName = "cmd.exe",
-                        Arguments = $"/k \"{tempPath}\"",
-                        Verb = "runas",
-                        UseShellExecute = true
-                    };
-                }
-                else if (ext == ".reg")
-                {
-                    psi = new ProcessStartInfo
-                    {
-                        FileName = "regedit.exe",
-                        Arguments = $"/s \"{tempPath}\"",
-                        Verb = "runas",
-                        UseShellExecute = true
-                    };
-                }
-                else
-                {
-                    psi = new ProcessStartInfo
-                    {
-                        FileName = tempPath,
-                        Verb = "runas",
-                        UseShellExecute = true
-                    };
-                }
+                    FileName = "powershell.exe",
+                    Arguments = $"-ExecutionPolicy Bypass -File \"{scriptPath}\"",
+                    UseShellExecute = true,
+                    Verb = "runas"
+                };
 
                 Process.Start(psi);
             }
             catch (Exception ex)
             {
-                Log("ERREUR : " + ex.Message);
+                MessageBox.Show(ex.Message, "Erreur lancement script", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private Button Card(string title, string subtitle, string icon, string path)
+        private void LoadHome()
         {
-            Button btn = new Button
-            {
-                Height = 64,
-                Margin = new Thickness(0, 0, 0, 10),
-                Background = Brushes.Transparent,
-                BorderThickness = new Thickness(0),
-                Cursor = System.Windows.Input.Cursors.Hand,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch
-            };
-
-            Border card = new Border
-            {
-                Background = new SolidColorBrush(Color.FromRgb(76, 76, 76)),
-                CornerRadius = new CornerRadius(10),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(92, 92, 92)),
-                BorderThickness = new Thickness(1),
-                Padding = new Thickness(14)
-            };
-
-            Grid row = new Grid();
-            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(46) });
-            row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-            Border iconBg = new Border
-            {
-                Width = 34,
-                Height = 34,
-                Background = new SolidColorBrush(Color.FromRgb(84, 84, 84)),
-                CornerRadius = new CornerRadius(8),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            TextBlock iconBlock = new TextBlock
-            {
-                Text = icon,
-                FontSize = 16,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            iconBg.Child = iconBlock;
-
-            StackPanel texts = new StackPanel
-            {
-                VerticalAlignment = VerticalAlignment.Center
-            };
-
-            texts.Children.Add(new TextBlock
-            {
-                Text = title,
-                Foreground = Brushes.White,
-                FontSize = 14,
-                FontWeight = FontWeights.Bold
-            });
-
-            texts.Children.Add(new TextBlock
-            {
-                Text = subtitle,
-                Foreground = new SolidColorBrush(Color.FromRgb(190, 190, 190)),
-                FontSize = 11,
-                Margin = new Thickness(0, 2, 0, 0)
-            });
-
-            Grid.SetColumn(iconBg, 0);
-            Grid.SetColumn(texts, 1);
-
-            row.Children.Add(iconBg);
-            row.Children.Add(texts);
-
-            card.Child = row;
-            btn.Content = card;
-
-            btn.Click += async (s, e) => await RunFromGitHub(path);
-
-            return btn;
-        }
-
-        private void Clear()
-        {
-            CardsLeft.Children.Clear();
-            CardsRight.Children.Clear();
-        }
-
-        public void ShowHome(object sender, RoutedEventArgs e)
-        {
-            PageTitle.Text = "Bienvenue sur ";
-            AccentTitle.Text = "E-TWEAKS";
+            PageTitle.Text = "Bienvenue sur E-TWEAKS";
             PageSubtitle.Text = "Installateurs rapides";
-            Clear();
+            ClearCards();
 
-            CardsLeft.Children.Add(Card("AnyDesk", "Installer AnyDesk", "💻", "Home/Anydesk.ps1"));
-            CardsLeft.Children.Add(Card("Discord", "Installer Discord", "💬", "Home/Discord.ps1"));
-            CardsLeft.Children.Add(Card("Epic Games", "Installer Epic Games", "🎮", "Home/EpicGames.ps1"));
-
-            CardsRight.Children.Add(Card("Google Chrome", "Installer Google Chrome", "🌐", "Home/Google.ps1"));
-            CardsRight.Children.Add(Card("Spotify", "Installer Spotify", "🎵", "Home/Spotify.ps1"));
-            CardsRight.Children.Add(Card("UserDiag", "Installer UserDiag", "👤", "Home/Userdiag.ps1"));
+            AddCard("◆", "AnyDesk", "Installer AnyDesk", "Install-AnyDesk.ps1");
+            AddCard("◉", "Google Chrome", "Installer Google Chrome", "Install-Chrome.ps1");
+            AddCard("☯", "Discord", "Installer Discord", "Install-Discord.ps1");
+            AddCard("♫", "Spotify", "Installer Spotify", "Install-Spotify.ps1");
+            AddCard("🎮", "Epic Games", "Installer Epic Games", "Install-EpicGames.ps1");
+            AddCard("●", "UserDiag", "Installer UserDiag", "Install-UserDiag.ps1");
         }
 
-        public void ShowWindows(object sender, RoutedEventArgs e)
+        private void LoadWindows()
         {
-            PageTitle.Text = "Menu ";
-            AccentTitle.Text = "Windows";
+            PageTitle.Text = "Menu Windows";
             PageSubtitle.Text = "Scripts Windows";
-            Clear();
+            ClearCards();
 
-            CardsLeft.Children.Add(Card("Devices Cleanup", "Nettoyage périphériques", "🧹", "Windows/Devices-Cleanup.ps1"));
-            CardsLeft.Children.Add(Card("Disabling Devices", "Device Manager", "🖥️", "Windows/Disabling Devices (Device Manager).bat"));
-            CardsLeft.Children.Add(Card("Keyboard Optimizations", "Optimisations clavier registre", "⌨️", "Windows/MainKeyboard-Optimizations-Registry (2).bat"));
-            CardsLeft.Children.Add(Card("System Profile Tasks", "Post Processing Registry", "🧩", "Windows/SystemProfileTasksDisplayPostProcessing.reg"));
-
-            CardsRight.Children.Add(Card("USB Power Saving", "Désactiver économie USB", "🔌", "Windows/USBDisablePowerSaving (1).bat"));
-            CardsRight.Children.Add(Card("Uninstall", "Script désinstallation", "🗑️", "Windows/UNINSTALL.bat"));
-            CardsRight.Children.Add(Card("Services", "Optimisation services Windows", "⚙️", "Windows/services.cmd"));
+            AddCard("🧹", "Devices Cleanup", "Nettoyage périphériques", "Devices-Cleanup.ps1");
+            AddCard("🔌", "USB Power Saving", "Désactiver économie USB", "USBDisablePowerSaving.ps1");
+            AddCard("🖥", "Disabling Devices", "Device Manager", "Disabling-Devices.ps1");
+            AddCard("🗑", "Uninstall", "Script désinstallation", "Uninstall.ps1");
+            AddCard("⌨", "Keyboard Optimizations", "Optimisations clavier registre", "Keyboard-Optimizations.ps1");
+            AddCard("⚙", "Services", "Optimisation services Windows", "Services.ps1");
+            AddCard("🧩", "System Profile Tasks", "Post Processing Registry", "System-Profile-Tasks.ps1");
         }
 
-        public void ShowGames(object sender, RoutedEventArgs e)
+        private void LoadJeux()
         {
-            PageTitle.Text = "Menu ";
-            AccentTitle.Text = "Jeux";
+            PageTitle.Text = "Menu Jeux";
             PageSubtitle.Text = "Optimisations gaming";
-            Clear();
+            ClearCards();
 
-            CardsLeft.Children.Add(Card("Fortnite", "Optimisation Fortnite", "🎮", "Jeux/Fortnite.ps1"));
-            CardsLeft.Children.Add(Card("Fortnite Debloat", "Installation debloat", "🧹", "Jeux/FortniteDebloatInstallation.ps1"));
-
-            CardsRight.Children.Add(Card("FiveM", "Optimisation FiveM", "🚗", "Jeux/FiveMTool-Windows-Optimization.ps1"));
-            CardsRight.Children.Add(Card("Valorant", "Optimisation Valorant", "🎯", "Jeux/ValorantTool-Windows-Optimization.ps1"));
+            AddCard("🎮", "Fortnite", "Optimisation Fortnite", "Fortnite.ps1");
+            AddCard("🚗", "FiveM", "Optimisation FiveM", "FiveM.ps1");
+            AddCard("🧹", "Fortnite Debloat", "Installation debloat", "Fortnite-Debloat.ps1");
+            AddCard("🎯", "Valorant", "Optimisation Valorant", "Valorant.ps1");
         }
 
-        public void ShowPower(object sender, RoutedEventArgs e)
+        private void LoadPowerPlan()
         {
-            PageTitle.Text = "Menu ";
-            AccentTitle.Text = "PowerPlan";
+            PageTitle.Text = "Menu PowerPlan";
             PageSubtitle.Text = "Plans d’alimentation";
-            Clear();
+            ClearCards();
 
-            CardsLeft.Children.Add(Card("PowerPlan", "Appliquer le plan performance", "⚡", "PowerPlan/Power.ps1"));
+            AddCard("⚡", "PowerPlan", "Appliquer le plan performance", "PowerPlan.ps1");
         }
 
-        public void ShowServices(object sender, RoutedEventArgs e)
+        private void LoadServices()
         {
-            PageTitle.Text = "Menu ";
-            AccentTitle.Text = "Services";
-            PageSubtitle.Text = "Gestion et confidentialité";
-            Clear();
+            PageTitle.Text = "Menu Services";
+            PageSubtitle.Text = "Optimisation services Windows";
+            ClearCards();
 
-            CardsLeft.Children.Add(Card("Privacy Script", "Confidentialité Windows", "🔒", "Services/privacy-script.bat"));
-            CardsRight.Children.Add(Card("Services", "Optimisation services", "⚙️", "Services/services.cmd"));
+            AddCard("⚙", "Services Optimizer", "Désactiver services inutiles", "Services.ps1");
         }
 
-        public void ShowGPU(object sender, RoutedEventArgs e)
+        private void LoadNvidia()
         {
-            PageTitle.Text = "Menu ";
-            AccentTitle.Text = "Nvidia";
+            PageTitle.Text = "Menu Nvidia";
             PageSubtitle.Text = "Optimisations Nvidia";
-            Clear();
+            ClearCards();
 
-            CardsLeft.Children.Add(Card("Disable Telemetry", "Désactiver télémétrie Nvidia", "📡", "GPU/Nvidia/!Disable telemetry (Breaks Geforce).bat"));
+            AddCard("◉", "Disable Telemetry", "Désactiver télémétrie Nvidia", "Disable-Telemetry.ps1");
+            AddCard("🧽", "NVCleanstall", "Télécharger NVCleanstall", "NVCleanstall.ps1");
+        }
 
-            CardsRight.Children.Add(Card("NVCleanstall", "Télécharger NVCleanstall", "🧼", "https://www.techpowerup.com/download/techpowerup-nvcleanstall/"));
+        private void LoadSettings()
+        {
+            PageTitle.Text = "Paramètres";
+            PageSubtitle.Text = "Configuration de l’application";
+            ClearCards();
+
+            AddCard("📁", "Ouvrir dossier scripts", "Accéder aux fichiers", "Open-Scripts-Folder.ps1");
+        }
+
+        private void BtnHome_Click(object sender, RoutedEventArgs e)
+        {
+            SetActive(BtnHome);
+            LoadHome();
+        }
+
+        private void BtnWindows_Click(object sender, RoutedEventArgs e)
+        {
+            SetActive(BtnWindows);
+            LoadWindows();
+        }
+
+        private void BtnJeux_Click(object sender, RoutedEventArgs e)
+        {
+            SetActive(BtnJeux);
+            LoadJeux();
+        }
+
+        private void BtnPowerPlan_Click(object sender, RoutedEventArgs e)
+        {
+            SetActive(BtnPowerPlan);
+            LoadPowerPlan();
+        }
+
+        private void BtnServices_Click(object sender, RoutedEventArgs e)
+        {
+            SetActive(BtnServices);
+            LoadServices();
+        }
+
+        private void BtnNvidia_Click(object sender, RoutedEventArgs e)
+        {
+            SetActive(BtnNvidia);
+            LoadNvidia();
+        }
+
+        private void BtnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SetActive(BtnSettings);
+            LoadSettings();
         }
     }
 }
