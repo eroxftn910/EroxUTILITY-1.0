@@ -1,5 +1,9 @@
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -8,11 +12,12 @@ namespace E_TWEAKS
 {
     public partial class MainWindow : Window
     {
-        private readonly string ScriptFolder = "Scripts";
+        private readonly string GitHubBaseUrl = "https://raw.githubusercontent.com/eroxftn910/EroxUTILITY-1.0/main/";
 
         public MainWindow()
         {
             InitializeComponent();
+            SetActive(BtnHome);
             LoadHome();
         }
 
@@ -34,83 +39,136 @@ namespace E_TWEAKS
             CardsGrid.Children.Clear();
         }
 
-        private void AddCard(string icon, string title, string subtitle, string scriptName)
+        private string EncodePath(string path)
+        {
+            return string.Join("/", path.Split('/').Select(Uri.EscapeDataString));
+        }
+
+        private void AddCard(string icon, string title, string subtitle, string path)
         {
             Button card = new Button
             {
                 Style = (Style)FindResource("ActionCard"),
-                Tag = scriptName
+                Tag = path
             };
 
             StackPanel panel = new StackPanel();
 
-            TextBlock iconText = new TextBlock
+            panel.Children.Add(new TextBlock
             {
                 Text = icon,
                 FontSize = 34,
                 Foreground = new SolidColorBrush(Color.FromRgb(177, 92, 255)),
                 Margin = new Thickness(0, 0, 0, 18)
-            };
+            });
 
-            TextBlock titleText = new TextBlock
+            panel.Children.Add(new TextBlock
             {
                 Text = title,
                 FontSize = 17,
                 FontWeight = FontWeights.Bold,
                 Foreground = Brushes.White
-            };
+            });
 
-            TextBlock subtitleText = new TextBlock
+            panel.Children.Add(new TextBlock
             {
                 Text = subtitle,
                 FontSize = 13,
                 Foreground = new SolidColorBrush(Color.FromRgb(169, 164, 199)),
                 Margin = new Thickness(0, 6, 0, 0)
-            };
-
-            panel.Children.Add(iconText);
-            panel.Children.Add(titleText);
-            panel.Children.Add(subtitleText);
+            });
 
             card.Content = panel;
             card.Click += Card_Click;
-
             CardsGrid.Children.Add(card);
         }
 
-        private void Card_Click(object sender, RoutedEventArgs e)
+        private async void Card_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.Tag is string scriptName)
-            {
-                RunScript(scriptName);
-            }
+            if (sender is Button btn && btn.Tag is string path)
+                await RunScript(path);
         }
 
-        private void RunScript(string scriptName)
+        private async Task RunScript(string path)
         {
             try
             {
-                string scriptPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ScriptFolder, scriptName);
-
-                if (!System.IO.File.Exists(scriptPath))
+                if (path.StartsWith("http://") || path.StartsWith("https://"))
                 {
-                    MessageBox.Show($"Script introuvable :\n{scriptPath}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = path,
+                        UseShellExecute = true
+                    });
                     return;
                 }
 
-                ProcessStartInfo psi = new ProcessStartInfo
+                string tempFolder = Path.Combine(Path.GetTempPath(), "E-TWEAKS");
+                Directory.CreateDirectory(tempFolder);
+
+                string fileName = Path.GetFileName(path);
+                string localPath = Path.Combine(tempFolder, fileName);
+                string url = GitHubBaseUrl + EncodePath(path);
+
+                using HttpClient client = new HttpClient();
+                byte[] data = await client.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(localPath, data);
+
+                string ext = Path.GetExtension(localPath).ToLower();
+                ProcessStartInfo psi;
+
+                if (ext == ".ps1")
                 {
-                    FileName = "powershell.exe",
-                    Arguments = $"-ExecutionPolicy Bypass -File \"{scriptPath}\"",
-                    UseShellExecute = true,
-                    Verb = "runas"
-                };
+                    psi = new ProcessStartInfo
+                    {
+                        FileName = "powershell.exe",
+                        Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{localPath}\"",
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    };
+                }
+                else if (ext == ".bat" || ext == ".cmd")
+                {
+                    psi = new ProcessStartInfo
+                    {
+                        FileName = "cmd.exe",
+                        Arguments = $"/k \"{localPath}\"",
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    };
+                }
+                else if (ext == ".reg")
+                {
+                    psi = new ProcessStartInfo
+                    {
+                        FileName = "regedit.exe",
+                        Arguments = $"/s \"{localPath}\"",
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    };
+                }
+                else
+                {
+                    psi = new ProcessStartInfo
+                    {
+                        FileName = localPath,
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    };
+                }
 
                 Process.Start(psi);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Erreur lancement script", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Impossible de télécharger ou lancer le script.\n\n" +
+                    "Chemin : " + path + "\n\n" +
+                    ex.Message,
+                    "Erreur",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
@@ -120,12 +178,12 @@ namespace E_TWEAKS
             PageSubtitle.Text = "Installateurs rapides";
             ClearCards();
 
-            AddCard("◆", "AnyDesk", "Installer AnyDesk", "Install-AnyDesk.ps1");
-            AddCard("◉", "Google Chrome", "Installer Google Chrome", "Install-Chrome.ps1");
-            AddCard("☯", "Discord", "Installer Discord", "Install-Discord.ps1");
-            AddCard("♫", "Spotify", "Installer Spotify", "Install-Spotify.ps1");
-            AddCard("🎮", "Epic Games", "Installer Epic Games", "Install-EpicGames.ps1");
-            AddCard("●", "UserDiag", "Installer UserDiag", "Install-UserDiag.ps1");
+            AddCard("◆", "AnyDesk", "Installer AnyDesk", "Home/Anydesk.ps1");
+            AddCard("☯", "Discord", "Installer Discord", "Home/Discord.ps1");
+            AddCard("🎮", "Epic Games", "Installer Epic Games", "Home/EpicGames.ps1");
+            AddCard("◉", "Google Chrome", "Installer Google Chrome", "Home/Google.ps1");
+            AddCard("♫", "Spotify", "Installer Spotify", "Home/Spotify.ps1");
+            AddCard("●", "UserDiag", "Installer UserDiag", "Home/Userdiag.ps1");
         }
 
         private void LoadWindows()
@@ -134,13 +192,13 @@ namespace E_TWEAKS
             PageSubtitle.Text = "Scripts Windows";
             ClearCards();
 
-            AddCard("🧹", "Devices Cleanup", "Nettoyage périphériques", "Devices-Cleanup.ps1");
-            AddCard("🔌", "USB Power Saving", "Désactiver économie USB", "USBDisablePowerSaving.ps1");
-            AddCard("🖥", "Disabling Devices", "Device Manager", "Disabling-Devices.ps1");
-            AddCard("🗑", "Uninstall", "Script désinstallation", "Uninstall.ps1");
-            AddCard("⌨", "Keyboard Optimizations", "Optimisations clavier registre", "Keyboard-Optimizations.ps1");
-            AddCard("⚙", "Services", "Optimisation services Windows", "Services.ps1");
-            AddCard("🧩", "System Profile Tasks", "Post Processing Registry", "System-Profile-Tasks.ps1");
+            AddCard("🧹", "Devices Cleanup", "Nettoyage périphériques", "Windows/Devices-Cleanup.ps1");
+            AddCard("🖥", "Disabling Devices", "Device Manager", "Windows/Disabling Devices (Device Manager).bat");
+            AddCard("⌨", "Keyboard Optimizations", "Optimisations clavier registre", "Windows/MainKeyboard-Optimizations-Registry (2).bat");
+            AddCard("🧩", "System Profile Tasks", "Post Processing Registry", "Windows/SystemProfileTasksDisplayPostProcessing.reg");
+            AddCard("🔌", "USB Power Saving", "Désactiver économie USB", "Windows/USBDisablePowerSaving (1).bat");
+            AddCard("🗑", "Uninstall", "Script désinstallation", "Windows/UNINSTALL.bat");
+            AddCard("⚙", "Services", "Optimisation services Windows", "Windows/services.cmd");
         }
 
         private void LoadJeux()
@@ -149,10 +207,10 @@ namespace E_TWEAKS
             PageSubtitle.Text = "Optimisations gaming";
             ClearCards();
 
-            AddCard("🎮", "Fortnite", "Optimisation Fortnite", "Fortnite.ps1");
-            AddCard("🚗", "FiveM", "Optimisation FiveM", "FiveM.ps1");
-            AddCard("🧹", "Fortnite Debloat", "Installation debloat", "Fortnite-Debloat.ps1");
-            AddCard("🎯", "Valorant", "Optimisation Valorant", "Valorant.ps1");
+            AddCard("🎮", "Fortnite", "Optimisation Fortnite", "Jeux/Fortnite.ps1");
+            AddCard("🚗", "FiveM", "Optimisation FiveM", "Jeux/FiveMTool-Windows-Optimization.ps1");
+            AddCard("🧹", "Fortnite Debloat", "Installation debloat", "Jeux/FortniteDebloatInstallation.ps1");
+            AddCard("🎯", "Valorant", "Optimisation Valorant", "Jeux/ValorantTool-Windows-Optimization.ps1");
         }
 
         private void LoadPowerPlan()
@@ -161,7 +219,7 @@ namespace E_TWEAKS
             PageSubtitle.Text = "Plans d’alimentation";
             ClearCards();
 
-            AddCard("⚡", "PowerPlan", "Appliquer le plan performance", "PowerPlan.ps1");
+            AddCard("⚡", "PowerPlan", "Appliquer le plan performance", "PowerPlan/Power.ps1");
         }
 
         private void LoadServices()
@@ -170,7 +228,7 @@ namespace E_TWEAKS
             PageSubtitle.Text = "Optimisation services Windows";
             ClearCards();
 
-            AddCard("⚙", "Services Optimizer", "Désactiver services inutiles", "Services.ps1");
+            AddCard("⚙", "Services Optimizer", "Désactiver services inutiles", "Services/services.cmd");
         }
 
         private void LoadNvidia()
@@ -179,8 +237,9 @@ namespace E_TWEAKS
             PageSubtitle.Text = "Optimisations Nvidia";
             ClearCards();
 
-            AddCard("◉", "Disable Telemetry", "Désactiver télémétrie Nvidia", "Disable-Telemetry.ps1");
-            AddCard("🧽", "NVCleanstall", "Télécharger NVCleanstall", "NVCleanstall.ps1");
+            AddCard("🖥", "Disable HDCP", "Désactiver HDCP", "GPU/Nvidia/!Disable HDCP.bat");
+            AddCard("◉", "Disable Telemetry", "Désactiver télémétrie Nvidia", "GPU/Nvidia/!Disable telemetry (Breaks Geforce).bat");
+            AddCard("🧽", "NVCleanstall", "Télécharger NVCleanstall", "https://www.techpowerup.com/download/techpowerup-nvcleanstall/");
         }
 
         private void LoadSettings()
@@ -189,49 +248,15 @@ namespace E_TWEAKS
             PageSubtitle.Text = "Configuration de l’application";
             ClearCards();
 
-            AddCard("📁", "Ouvrir dossier scripts", "Accéder aux fichiers", "Open-Scripts-Folder.ps1");
+            AddCard("📁", "Ouvrir GitHub", "Accéder aux fichiers", "https://github.com/eroxftn910/EroxUTILITY-1.0");
         }
 
-        private void BtnHome_Click(object sender, RoutedEventArgs e)
-        {
-            SetActive(BtnHome);
-            LoadHome();
-        }
-
-        private void BtnWindows_Click(object sender, RoutedEventArgs e)
-        {
-            SetActive(BtnWindows);
-            LoadWindows();
-        }
-
-        private void BtnJeux_Click(object sender, RoutedEventArgs e)
-        {
-            SetActive(BtnJeux);
-            LoadJeux();
-        }
-
-        private void BtnPowerPlan_Click(object sender, RoutedEventArgs e)
-        {
-            SetActive(BtnPowerPlan);
-            LoadPowerPlan();
-        }
-
-        private void BtnServices_Click(object sender, RoutedEventArgs e)
-        {
-            SetActive(BtnServices);
-            LoadServices();
-        }
-
-        private void BtnNvidia_Click(object sender, RoutedEventArgs e)
-        {
-            SetActive(BtnNvidia);
-            LoadNvidia();
-        }
-
-        private void BtnSettings_Click(object sender, RoutedEventArgs e)
-        {
-            SetActive(BtnSettings);
-            LoadSettings();
-        }
+        private void BtnHome_Click(object sender, RoutedEventArgs e) { SetActive(BtnHome); LoadHome(); }
+        private void BtnWindows_Click(object sender, RoutedEventArgs e) { SetActive(BtnWindows); LoadWindows(); }
+        private void BtnJeux_Click(object sender, RoutedEventArgs e) { SetActive(BtnJeux); LoadJeux(); }
+        private void BtnPowerPlan_Click(object sender, RoutedEventArgs e) { SetActive(BtnPowerPlan); LoadPowerPlan(); }
+        private void BtnServices_Click(object sender, RoutedEventArgs e) { SetActive(BtnServices); LoadServices(); }
+        private void BtnNvidia_Click(object sender, RoutedEventArgs e) { SetActive(BtnNvidia); LoadNvidia(); }
+        private void BtnSettings_Click(object sender, RoutedEventArgs e) { SetActive(BtnSettings); LoadSettings(); }
     }
 }
