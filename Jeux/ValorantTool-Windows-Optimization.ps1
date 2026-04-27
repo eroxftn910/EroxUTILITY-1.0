@@ -21,7 +21,7 @@ if (-not ((New-Object Security.Principal.WindowsPrincipal ([Security.Principal.W
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 
 $insoptiWindow = $Host.UI.RawUI
-$insoptiWindow.WindowTitle = "[https://guns.lol/inso.vs] | Valorant Performance & Latency Optimization Toolkit."
+$insoptiWindow.WindowTitle = "[https://guns.lol/inso.vs] | Valorant Performance and Latency Optimization Toolkit."
 $insoptiWindow.BackgroundColor = "Black"
 Clear-Host
 
@@ -61,7 +61,7 @@ function insoptibanner {
     Write-Output ""
     Write-Output ""
     Write-Host "                                   " -NoNewline
-    Write-Host "Valorant Performance & Latency Optimization Toolkit" -ForegroundColor Black -BackgroundColor Blue -NoNewline
+    Write-Host "Valorant Performance and Latency Optimization Toolkit" -ForegroundColor Black -BackgroundColor Blue -NoNewline
     Write-Host "." -NoNewline -ForegroundColor Black
     Write-Output ""
     Write-Output ""
@@ -77,12 +77,12 @@ function insoptibanner {
     Write-Host "                              This script must be downloaded only from the official source." -ForegroundColor DarkGray
     Write-Output ""
     Write-Host "                      Provides optional OS tweaks to improve system performance and responsiveness." -ForegroundColor White
-    Write-Host "              Users can choose which optimizations to apply. CPU & I/O priority is raised to allocate more" -ForegroundColor White
+    Write-Host "              Users can choose which optimizations to apply. CPU and I/O priority is raised to allocate more" -ForegroundColor White
     Write-Host "              resources to Valorant for smoother gameplay. Network tuning Throttle Rate off + DSCP 46 via QoS" -ForegroundColor White
     Write-Host "                      optimized for lower latency and removes throttling for the game executable." -ForegroundColor White
     Write-Host "                    Firewall rules ensure proper access without unnecessary connection interruptions." -ForegroundColor White
     Write-Host "                Defender exclusions prevent background scans from negatively affecting game performance." -ForegroundColor White
-    Write-Host "             These changes affect only the Windows registry — They are " -ForegroundColor White -NoNewline
+    Write-Host "             These changes affect only the Windows registry - They are " -ForegroundColor White -NoNewline
     Write-Host "safe" -ForegroundColor Blue -NoNewline
     Write-Host ", " -ForegroundColor White -NoNewline
     Write-Host "efficient" -ForegroundColor Cyan -NoNewline
@@ -93,7 +93,7 @@ function insoptibanner {
     Write-Host "                    Note: in some cases, your game may refuse to launch or display an error on startup." -ForegroundColor Yellow
     Write-Host "               This is caused by 'runasadmin optimization' for some users, the game can may refuse to launch." -ForegroundColor Yellow
     Write-Output ""
-    Write-Host " ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗" -ForegroundColor DarkGray
+    Write-Host " ------------------------------------------------------------------------------------------------------------------------" -ForegroundColor DarkGray
     Write-Output ""
 }
 
@@ -143,7 +143,7 @@ function insoptiApplyPerfOptions {
         Write-Host "+" -NoNewline -ForegroundColor Green
         Write-Host "] " -NoNewline -ForegroundColor White
         Write-Host "Successfully" -NoNewline -ForegroundColor Green
-        Write-Host " set CPU & I/O priority to " -NoNewline -ForegroundColor White
+        Write-Host " set CPU and I/O priority to " -NoNewline -ForegroundColor White
         Write-Host "High" -NoNewline -ForegroundColor Green
         Write-Host ", Allocates more system resources to Valorant in foreground." -ForegroundColor White
     } catch {
@@ -239,7 +239,7 @@ function insoptiApplyFirewall {
         Write-Host "] " -NoNewline -ForegroundColor White
         Write-Host "Successfully" -NoNewline -ForegroundColor Green
         Write-Host " added firewall rules " -NoNewline -ForegroundColor White
-        Write-Host "Inbound & Outbound" -NoNewline -ForegroundColor Green
+        Write-Host "Inbound and Outbound" -NoNewline -ForegroundColor Green
         Write-Host ", Prevents connection blocking and packet loss." -ForegroundColor White
     } catch {
         insoptiwh "Firewall configuration error: $($_.Exception.Message)" "error"
@@ -277,7 +277,7 @@ function insoptiRemoveAll {
         Write-Host "+" -NoNewline -ForegroundColor Yellow
         Write-Host "] " -NoNewline -ForegroundColor White
         Write-Host "Successfully" -NoNewline -ForegroundColor Yellow
-        Write-Host " removed CPU & I/O priority, Restored to " -NoNewline -ForegroundColor White
+        Write-Host " removed CPU and I/O priority, Restored to " -NoNewline -ForegroundColor White
         Write-Host "Normal" -NoNewline -ForegroundColor Cyan
         Write-Host " default priority." -ForegroundColor White
     } catch {
@@ -400,7 +400,7 @@ insoptiL "  ⚙" 25 $true @(0, 140, 255) 9 26 | Out-Null
 insoptiL "Valorant Optimization Toolkit." 15 $true @(0, 140, 255) 70 24 | Out-Null
 
 $insoptimade = New-Object Windows.Forms.Label
-$insoptimade.Text = "Made by @insopti | Optimizes Valorant's performance for Windows."
+$insoptimade.Text = "Made by @insopti | Optimizes Valorant performance for Windows."
 $insoptimade.AutoSize = $true
 $insoptimade.Font = New-Object Drawing.Font("Segoe UI", 9, [Drawing.FontStyle]::Italic)
 $insoptimade.ForeColor = [Drawing.Color]::FromArgb(130, 130, 130)
@@ -471,7 +471,7 @@ $insoptib.Add_Click({
         insoptiApplyRunAsAdmin
         insoptiApplyFirewall
         insoptiApplyDefender
-        [Windows.Forms.MessageBox]::Show("     ✅  All optimizations have been applied successfully !") | Out-Null
+        [Windows.Forms.MessageBox]::Show("     [OK] All optimizations have been applied successfully !") | Out-Null
         return
     }
     if ($insopticbx["CPU Priority (CPU and I/O Priority set to High)"].Checked) { insoptiApplyPerfOptions }
