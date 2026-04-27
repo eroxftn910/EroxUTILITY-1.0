@@ -1,11 +1,3 @@
-<#
-.SYNOPSIS
-Valorant Performance & Latency Optimization Toolkit (v1.3).
-Applies OS-level tweaks to boost performance, enhance responsiveness, reduce input delay, and lower network latency. 
-Automatically assigns high CPU priority, prioritizes network traffic via QoS rules, and adds custom firewall exceptions. 
-Excludes the Valorant directory from Windows Defender scans to improve stability, latency, and competitive performance. 
-All optimizations are 100% safe and non-invasive.
-
 .NOTES
 Author : [insopti/inso.vs] - (https://guns.lol/inso.vs)
 Title : "Valorant Performance & Latency Optimization Toolkit System-level Tweaks."
