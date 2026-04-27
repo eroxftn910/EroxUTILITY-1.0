@@ -75,7 +75,7 @@ default {
     $Host.UI.RawUI.CursorPosition = @{X=0;Y=($Host.UI.RawUI.CursorPosition.Y - 1)};insoptiwhrt (" " * ($Host.UI.RawUI.WindowSize.Width)) -NoNewLine;$Host.UI.RawUI.CursorPosition = @{X=0;Y=($Host.UI.RawUI.CursorPosition.Y)};insoptiwhrt ""
     insoptiShowProgress -insopti_Message "Searching for Fortnite path, please wait" -insopti_DurationSeconds 3
     if ($insoptiDriveLetter -match '^[A-Z]$') {
-        $insoptiDrivePath = "${insoptiDriveLetter}:\"  
+        $insoptiDrivePath = $insoptiDriveLetter + ":\"  
         $insoptiFNPath = $null
     try {
         $insoptiFNPath = Get-ChildItem -Path $insoptiDrivePath -Filter "Fortnite" -Directory -Recurse -ErrorAction SilentlyContinue |
