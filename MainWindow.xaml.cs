@@ -3,10 +3,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Microsoft.Win32;
+using Microsoft.VisualBasic;
 
 namespace E_TWEAKS
 {
@@ -14,11 +18,77 @@ namespace E_TWEAKS
     {
         private readonly string GitHubBaseUrl = "https://raw.githubusercontent.com/eroxftn910/EroxUTILITY-1.0/main/";
 
+        private readonly string licensePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "E-TWEAKS",
+            "license.txt"
+        );
+
+        private const string LicenseSecret = "CHANGE-MOI-SECRET-ER0X-2026";
+
         public MainWindow()
         {
             InitializeComponent();
+
+            if (!CheckLicense())
+            {
+                Application.Current.Shutdown();
+                return;
+            }
+
             SetActive(BtnHome);
             LoadHome();
+        }
+
+        private string GetHWID()
+        {
+            string hwid = Registry.LocalMachine
+                .OpenSubKey(@"SOFTWARE\Microsoft\Cryptography")
+                ?.GetValue("MachineGuid")
+                ?.ToString();
+
+            return hwid ?? Environment.MachineName;
+        }
+
+        private string GenerateKey(string hwid)
+        {
+            using SHA256 sha = SHA256.Create();
+            byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(hwid + LicenseSecret));
+
+            return BitConverter.ToString(hash)
+                .Replace("-", "")
+                .Substring(0, 16);
+        }
+
+        private bool CheckLicense()
+        {
+            string hwid = GetHWID();
+            string validKey = GenerateKey(hwid);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(licensePath));
+
+            if (File.Exists(licensePath))
+            {
+                string savedKey = File.ReadAllText(licensePath).Trim();
+
+                if (savedKey == validKey)
+                    return true;
+            }
+
+            string inputKey = Interaction.InputBox(
+                "Entre ta clé d'activation :\n\nHWID de ce PC :\n" + hwid,
+                "Activation E-TWEAKS",
+                ""
+            ).Trim();
+
+            if (inputKey == validKey)
+            {
+                File.WriteAllText(licensePath, inputKey);
+                return true;
+            }
+
+            MessageBox.Show("Clé invalide pour ce PC.", "Activation refusée", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
 
         private void SetActive(Button activeButton)
@@ -247,8 +317,6 @@ namespace E_TWEAKS
             PageTitle.Text = "Paramètres";
             PageSubtitle.Text = "Configuration de l’application";
             ClearCards();
-
-            AddCard("📁", "Ouvrir GitHub", "Accéder aux fichiers", "https://github.com/eroxftn910/EroxUTILITY-1.0");
         }
 
         private void BtnHome_Click(object sender, RoutedEventArgs e) { SetActive(BtnHome); LoadHome(); }
