@@ -17,13 +17,13 @@ namespace E_TWEAKS
     {
         private readonly string GitHubBaseUrl = "https://raw.githubusercontent.com/eroxftn910/EroxUTILITY-1.0/main/";
 
+        private const string LicenseSecret = "ER0X-SECRET-2026";
+
         private readonly string licensePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "E-TWEAKS",
             "license.txt"
         );
-
-        private const string LicenseSecret = "CHANGE-MOI-SECRET-ER0X-2026";
 
         public MainWindow()
         {
@@ -46,33 +46,35 @@ namespace E_TWEAKS
                 ?.GetValue("MachineGuid")
                 ?.ToString();
 
-            return hwid ?? Environment.MachineName;
+            return hwid?.Trim() ?? Environment.MachineName.Trim();
         }
 
         private string GenerateKey(string hwid)
         {
-            using SHA256 sha = SHA256.Create();
-            byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(hwid + LicenseSecret));
+            string data = hwid.Trim() + LicenseSecret;
 
-            return BitConverter.ToString(hash).Replace("-", "").Substring(0, 16);
+            using SHA256 sha = SHA256.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes(data);
+            byte[] hash = sha.ComputeHash(bytes);
+
+            return BitConverter.ToString(hash)
+                .Replace("-", "")
+                .Substring(0, 16)
+                .ToUpper();
         }
 
         private bool CheckLicense()
         {
             string hwid = GetHWID();
             string validKey = GenerateKey(hwid);
-            MessageBox.Show(
-    "HWID:\n" + hwid + "\n\nCLÉ QUE L'APP ATTEND:\n" + validKey,
-    "DEBUG LICENCE"
-);
 
             Directory.CreateDirectory(Path.GetDirectoryName(licensePath));
 
             if (File.Exists(licensePath))
             {
-                string savedKey = File.ReadAllText(licensePath).Trim();
+                string savedKey = File.ReadAllText(licensePath).Trim().ToUpper();
 
-                if (savedKey.Equals(validKey, StringComparison.OrdinalIgnoreCase))
+                if (savedKey == validKey)
                     return true;
             }
 
@@ -165,17 +167,23 @@ namespace E_TWEAKS
 
             activateButton.Click += (s, e) =>
             {
-                string enteredKey = keyBox.Text.Trim();
+                string enteredKey = keyBox.Text.Trim().ToUpper();
 
-                if (enteredKey.Equals(validKey, StringComparison.OrdinalIgnoreCase))
+                if (enteredKey == validKey)
                 {
                     File.WriteAllText(licensePath, validKey);
                     activated = true;
+                    MessageBox.Show("Activation réussie.", "E-TWEAKS");
                     activationWindow.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Clé invalide pour ce PC.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        "Clé invalide pour ce PC.\n\nVérifie que tu as généré la clé avec ce HWID :\n" + hwid,
+                        "Erreur",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
                 }
             };
 
