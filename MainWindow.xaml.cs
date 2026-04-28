@@ -61,6 +61,10 @@ namespace E_TWEAKS
         {
             string hwid = GetHWID();
             string validKey = GenerateKey(hwid);
+            MessageBox.Show(
+    "HWID:\n" + hwid + "\n\nCLÉ QUE L'APP ATTEND:\n" + validKey,
+    "DEBUG LICENCE"
+);
 
             Directory.CreateDirectory(Path.GetDirectoryName(licensePath));
 
