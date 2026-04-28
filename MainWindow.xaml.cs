@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
-using Microsoft.VisualBasic;
 
 namespace E_TWEAKS
 {
@@ -75,20 +74,121 @@ namespace E_TWEAKS
                     return true;
             }
 
-            string inputKey = Interaction.InputBox(
-                "Entre ta clé d'activation :\n\nHWID de ce PC :\n" + hwid,
-                "Activation E-TWEAKS",
-                ""
-            ).Trim();
-
-            if (inputKey == validKey)
+            Window activationWindow = new Window
             {
-                File.WriteAllText(licensePath, inputKey);
-                return true;
-            }
+                Title = "Activation E-TWEAKS",
+                Width = 460,
+                Height = 310,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                ResizeMode = ResizeMode.NoResize,
+                Background = new SolidColorBrush(Color.FromRgb(18, 18, 28))
+            };
 
-            MessageBox.Show("Clé invalide pour ce PC.", "Activation refusée", MessageBoxButton.OK, MessageBoxImage.Error);
-            return false;
+            StackPanel panel = new StackPanel
+            {
+                Margin = new Thickness(24)
+            };
+
+            TextBlock title = new TextBlock
+            {
+                Text = "Activation requise",
+                Foreground = Brushes.White,
+                FontSize = 24,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+
+            TextBlock hwidLabel = new TextBlock
+            {
+                Text = "HWID de ce PC :",
+                Foreground = new SolidColorBrush(Color.FromRgb(180, 170, 210)),
+                FontSize = 13
+            };
+
+            TextBox hwidBox = new TextBox
+            {
+                Text = hwid,
+                IsReadOnly = true,
+                Background = new SolidColorBrush(Color.FromRgb(35, 35, 50)),
+                Foreground = Brushes.White,
+                BorderBrush = new SolidColorBrush(Color.FromRgb(130, 70, 255)),
+                Margin = new Thickness(0, 6, 0, 10),
+                Padding = new Thickness(8)
+            };
+
+            Button copyButton = new Button
+            {
+                Content = "Copier HWID",
+                Height = 34,
+                Background = new SolidColorBrush(Color.FromRgb(130, 70, 255)),
+                Foreground = Brushes.White,
+                BorderThickness = new Thickness(0),
+                Margin = new Thickness(0, 0, 0, 16),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            TextBlock keyLabel = new TextBlock
+            {
+                Text = "Clé d'activation :",
+                Foreground = new SolidColorBrush(Color.FromRgb(180, 170, 210)),
+                FontSize = 13
+            };
+
+            TextBox keyBox = new TextBox
+            {
+                Background = new SolidColorBrush(Color.FromRgb(35, 35, 50)),
+                Foreground = Brushes.White,
+                BorderBrush = new SolidColorBrush(Color.FromRgb(130, 70, 255)),
+                Margin = new Thickness(0, 6, 0, 14),
+                Padding = new Thickness(8)
+            };
+
+            Button activateButton = new Button
+            {
+                Content = "Activer",
+                Height = 38,
+                Background = new SolidColorBrush(Color.FromRgb(130, 70, 255)),
+                Foreground = Brushes.White,
+                BorderThickness = new Thickness(0),
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            bool activated = false;
+
+            copyButton.Click += (s, e) =>
+            {
+                Clipboard.SetText(hwid);
+                MessageBox.Show("HWID copié.", "E-TWEAKS");
+            };
+
+            activateButton.Click += (s, e) =>
+            {
+                string enteredKey = keyBox.Text.Trim();
+
+                if (enteredKey == validKey)
+                {
+                    File.WriteAllText(licensePath, validKey);
+                    activated = true;
+                    activationWindow.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Clé invalide pour ce PC.", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            };
+
+            panel.Children.Add(title);
+            panel.Children.Add(hwidLabel);
+            panel.Children.Add(hwidBox);
+            panel.Children.Add(copyButton);
+            panel.Children.Add(keyLabel);
+            panel.Children.Add(keyBox);
+            panel.Children.Add(activateButton);
+
+            activationWindow.Content = panel;
+            activationWindow.ShowDialog();
+
+            return activated;
         }
 
         private void SetActive(Button activeButton)
