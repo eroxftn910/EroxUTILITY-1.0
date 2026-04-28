@@ -54,9 +54,7 @@ namespace E_TWEAKS
             using SHA256 sha = SHA256.Create();
             byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(hwid + LicenseSecret));
 
-            return BitConverter.ToString(hash)
-                .Replace("-", "")
-                .Substring(0, 16);
+            return BitConverter.ToString(hash).Replace("-", "").Substring(0, 16);
         }
 
         private bool CheckLicense()
@@ -70,7 +68,7 @@ namespace E_TWEAKS
             {
                 string savedKey = File.ReadAllText(licensePath).Trim();
 
-                if (savedKey == validKey)
+                if (savedKey.Equals(validKey, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
 
@@ -78,7 +76,7 @@ namespace E_TWEAKS
             {
                 Title = "Activation E-TWEAKS",
                 Width = 460,
-                Height = 310,
+                Height = 360,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize,
                 Background = new SolidColorBrush(Color.FromRgb(18, 18, 28))
@@ -95,13 +93,13 @@ namespace E_TWEAKS
                 Foreground = Brushes.White,
                 FontSize = 24,
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 16)
+                Margin = new Thickness(0, 0, 0, 18)
             };
 
             TextBlock hwidLabel = new TextBlock
             {
                 Text = "HWID de ce PC :",
-                Foreground = new SolidColorBrush(Color.FromRgb(180, 170, 210)),
+                Foreground = new SolidColorBrush(Color.FromRgb(190, 175, 255)),
                 FontSize = 13
             };
 
@@ -119,18 +117,18 @@ namespace E_TWEAKS
             Button copyButton = new Button
             {
                 Content = "Copier HWID",
-                Height = 34,
+                Height = 36,
                 Background = new SolidColorBrush(Color.FromRgb(130, 70, 255)),
                 Foreground = Brushes.White,
                 BorderThickness = new Thickness(0),
-                Margin = new Thickness(0, 0, 0, 16),
+                Margin = new Thickness(0, 0, 0, 18),
                 Cursor = System.Windows.Input.Cursors.Hand
             };
 
             TextBlock keyLabel = new TextBlock
             {
                 Text = "Clé d'activation :",
-                Foreground = new SolidColorBrush(Color.FromRgb(180, 170, 210)),
+                Foreground = new SolidColorBrush(Color.FromRgb(190, 175, 255)),
                 FontSize = 13
             };
 
@@ -139,14 +137,14 @@ namespace E_TWEAKS
                 Background = new SolidColorBrush(Color.FromRgb(35, 35, 50)),
                 Foreground = Brushes.White,
                 BorderBrush = new SolidColorBrush(Color.FromRgb(130, 70, 255)),
-                Margin = new Thickness(0, 6, 0, 14),
+                Margin = new Thickness(0, 6, 0, 16),
                 Padding = new Thickness(8)
             };
 
             Button activateButton = new Button
             {
-                Content = "Activer",
-                Height = 38,
+                Content = "Activer / Continuer",
+                Height = 40,
                 Background = new SolidColorBrush(Color.FromRgb(130, 70, 255)),
                 Foreground = Brushes.White,
                 BorderThickness = new Thickness(0),
@@ -165,7 +163,7 @@ namespace E_TWEAKS
             {
                 string enteredKey = keyBox.Text.Trim();
 
-                if (enteredKey == validKey)
+                if (enteredKey.Equals(validKey, StringComparison.OrdinalIgnoreCase))
                 {
                     File.WriteAllText(licensePath, validKey);
                     activated = true;
