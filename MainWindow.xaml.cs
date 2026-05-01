@@ -21,6 +21,7 @@ namespace E_TWEAKS
 
         private void BtnHome_Click(object sender, RoutedEventArgs e) => ShowHome();
         private void BtnWindows_Click(object sender, RoutedEventArgs e) => ShowWindows();
+        private void BtnInstallWindows_Click(object sender, RoutedEventArgs e) => ShowInstallWindows();
         private void BtnJeux_Click(object sender, RoutedEventArgs e) => ShowJeux();
         private void BtnPowerPlan_Click(object sender, RoutedEventArgs e) => ShowPowerPlan();
         private void BtnServices_Click(object sender, RoutedEventArgs e) => ShowServices();
@@ -31,6 +32,7 @@ namespace E_TWEAKS
         {
             BtnHome.Style = (Style)FindResource("MenuButton");
             BtnWindows.Style = (Style)FindResource("MenuButton");
+            BtnInstallWindows.Style = (Style)FindResource("MenuButton");
             BtnJeux.Style = (Style)FindResource("MenuButton");
             BtnPowerPlan.Style = (Style)FindResource("MenuButton");
             BtnServices.Style = (Style)FindResource("MenuButton");
@@ -91,13 +93,6 @@ namespace E_TWEAKS
             CardsGrid.Children.Add(card);
         }
 
-        private void AddExeCard(string icon, string title, string subtitle, string githubPath, string fileName)
-        {
-            Button card = CreateCard(icon, title, subtitle);
-            card.Click += async (_, _) => await DownloadAndRunExe(GithubBaseUrl + githubPath, fileName);
-            CardsGrid.Children.Add(card);
-        }
-
         private void AddActionCard(string icon, string title, string subtitle, RoutedEventHandler click)
         {
             Button card = CreateCard(icon, title, subtitle);
@@ -109,47 +104,47 @@ namespace E_TWEAKS
         {
             ClearCards("Bienvenue sur E-TWEAKS", "Installateurs rapides", BtnHome);
 
+            AddGithubCard("🧹", "Devices Cleanup", "Nettoyage périphériques Windows.", "Devices-Cleanup.ps1");
+            AddGithubCard("🎮", "Fortnite", "Optimisation Fortnite.", "FortniteDebloatInstallation (1).ps1");
+            AddGithubCard("⚡", "PowerPlan", "Plan d’alimentation optimisé.", "E-TWEAKS.ps1");
+            AddGithubCard("⚙️", "Services Optimizer", "Optimise les services Windows.", "services.cmd");
+        }
+
+        private void ShowInstallWindows()
+        {
+            ClearCards("Installer Windows", "Création clé USB Windows avec Rufus", BtnInstallWindows);
+
             AddActionCard("💿", "Installer Windows", "Télécharge et lance Rufus.", InstallerWindows_Click);
             AddActionCard("🖥️", "Redémarrer BIOS", "Redémarre directement dans le BIOS/UEFI.", RedemarrerBios_Click);
-            AddGithubCard("⚙️", "Services Optimizer", "Optimise les services Windows.", "services.cmd");
-            AddGithubCard("⚡", "PowerPlan Optimizer", "Applique un plan d’alimentation optimisé.", "E-TWEAKS.ps1");
-            AddGithubCard("🎮", "Fortnite Optimizer", "Optimisation Fortnite.", "FortniteDebloatInstallation (1).ps1");
-            AddExeCard("◉", "NVCleanstall", "Clean install NVIDIA.", "NVCleanstall_1.18.0.exe", "NVCleanstall.exe");
         }
 
         private void ShowWindows()
         {
-            ClearCards("Menu Windows", "Installation Windows et optimisations", BtnWindows);
-
-            AddActionCard("💿", "Installer Windows", "Télécharge et lance Rufus depuis GitHub.", InstallerWindows_Click);
-            AddActionCard("🖥️", "Redémarrer BIOS", "Redémarre dans le BIOS/UEFI.", RedemarrerBios_Click);
+            ClearCards("Menu Windows", "Scripts Windows", BtnWindows);
 
             AddGithubCard("🧹", "Devices Cleanup", "Nettoie les anciens périphériques Windows.", "Devices-Cleanup.ps1");
             AddGithubCard("🖥️", "Disabling Devices", "Optimisation Device Manager.", "Disabling Devices (Device Manager).bat");
-            AddGithubCard("⌨️", "Keyboard Optimizer", "Optimisations clavier registre.", "MainKeyboard-Optimizations-Registry (2).bat");
-            AddGithubCard("🔌", "USB Power Saving", "Désactive l’économie d’énergie USB.", "USBDisablePowerSaving (1).bat");
-            AddGithubCard("🛡️", "MPO Disable", "Désactive MPO.", "mpo disable.bat");
-            AddGithubCard("🛡️", "MPO Enable", "Réactive MPO.", "mpo enable.bat");
+            AddGithubCard("⌨️", "Keyboard Optimizations", "Optimisations clavier registre.", "MainKeyboard-Optimizations-Registry (2).bat");
+            AddGithubCard("🧩", "System Profile Tasks", "Post processing système.", "SystemProfileTasksDisplayPostProcessing.reg");
+            AddGithubCard("🔌", "USB Power Saving", "Désactive économie USB.", "USBDisablePowerSaving (1).bat");
+            AddGithubCard("🗑️", "Uninstall", "Nettoyage/désinstallation.", "Uninstall.bat");
         }
 
         private void ShowJeux()
         {
-            ClearCards("Menu Jeux", "Optimisations jeux", BtnJeux);
+            ClearCards("Menu Jeux", "Optimisations gaming", BtnJeux);
 
-            AddGithubCard("🎮", "Fortnite Debloat", "Optimisation Fortnite.", "FortniteDebloatInstallation (1).ps1");
-            AddGithubCard("🎯", "Valorant Optimizer", "Optimisation Valorant.", "ValorantTool-Windows-Optimization.ps1");
-            AddGithubCard("🚗", "FiveM Optimizer", "Optimisation FiveM.", "FiveMTool-Windows-Optimization.ps1");
+            AddGithubCard("🎮", "Fortnite", "Optimisation Fortnite.", "FortniteDebloatInstallation (1).ps1");
+            AddGithubCard("🚗", "FiveM", "Optimisation FiveM.", "FiveMTool-Windows-Optimization.ps1");
+            AddGithubCard("🧹", "Fortnite Debloat", "Debloat Fortnite.", "FortniteDebloatInstallation (1).ps1");
+            AddGithubCard("🎯", "Valorant", "Optimisation Valorant.", "ValorantTool-Windows-Optimization.ps1");
         }
 
         private void ShowPowerPlan()
         {
             ClearCards("Menu PowerPlan", "Plans d’alimentation", BtnPowerPlan);
 
-            AddGithubCard("⚡", "E-TWEAKS PowerPlan", "Applique le PowerPlan E-TWEAKS.", "E-TWEAKS.ps1");
-            AddGithubCard("⚡", "FTN Tool PowerPlan", "Optimisation PowerPlan FTN.", "FTNTool-1.2-Windows-Optimization (1).ps1");
-            AddGithubCard("⚡", "IP State", "Optimisation IP State.", "!P-State 0.bat");
-            AddGithubCard("⚡", "No ECC", "Optimisation ECC.", "!No ECC.bat");
-            AddGithubCard("⚡", "Clock Policy", "Optimisation clock policy.", "!Unrestricted Clock Policy by Cancerogeno.bat");
+            AddGithubCard("⚡", "PowerPlan", "Applique le PowerPlan.", "E-TWEAKS.ps1");
         }
 
         private void ShowServices()
@@ -161,20 +156,17 @@ namespace E_TWEAKS
 
         private void ShowNvidia()
         {
-            ClearCards("Menu NVIDIA", "Optimisations GPU", BtnNvidia);
+            ClearCards("Menu Nvidia", "Optimisations Nvidia", BtnNvidia);
 
-            AddExeCard("◉", "NVCleanstall", "Clean install NVIDIA.", "NVCleanstall_1.18.0.exe", "NVCleanstall.exe");
-            AddExeCard("◉", "NVIDIA Profile Inspector", "Réglages NVIDIA avancés.", "nvidiaProfileInspector.exe", "nvidiaProfileInspector.exe");
-            AddExeCard("◉", "Disable DX11 Navi", "Optimisation GPU.", "disable_dx11navi.exe", "disable_dx11navi.exe");
-            AddGithubCard("◉", "AMD Dwords", "Optimisation AMD.", "AMD Dwords by imribiy.bat");
+            AddGithubCard("⭕", "Disable Telemetry", "Désactive télémétrie NVIDIA.", "mpo disable.bat");
         }
 
         private void ShowSettings()
         {
             ClearCards("Paramètres", "Options de l’application", BtnSettings);
 
-            AddGithubCard("ℹ️", "System Profile Tasks", "Applique les tâches système.", "SystemProfileTasksDisplayPostProcessing.reg");
             AddGithubCard("ℹ️", "MPO Disable REG", "Désactive MPO via registre.", "Mpo_disable.reg");
+            AddGithubCard("ℹ️", "Settings NIP", "Import paramètres.", "Settings.nip");
         }
 
         private async void InstallerWindows_Click(object sender, RoutedEventArgs e)
@@ -251,14 +243,8 @@ namespace E_TWEAKS
                 string tempPath = Path.Combine(Path.GetTempPath(), fileName);
 
                 using HttpClient client = new HttpClient();
-
-                if (githubPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                {
-                    await DownloadAndRunExe(url, fileName);
-                    return;
-                }
-
                 byte[] data = await client.GetByteArrayAsync(url);
+
                 await File.WriteAllBytesAsync(tempPath, data);
 
                 if (githubPath.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
