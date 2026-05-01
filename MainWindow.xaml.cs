@@ -100,14 +100,30 @@ namespace E_TWEAKS
             CardsGrid.Children.Add(card);
         }
 
+        private void AddLinkCard(string icon, string title, string subtitle, string url)
+        {
+            Button card = CreateCard(icon, title, subtitle);
+            card.Click += (_, _) =>
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            };
+            CardsGrid.Children.Add(card);
+        }
+
         private void ShowHome()
         {
             ClearCards("Bienvenue sur E-TWEAKS", "Installateurs rapides", BtnHome);
 
-            AddGithubCard("🧹", "Devices Cleanup", "Nettoyage périphériques Windows.", "Devices-Cleanup.ps1");
-            AddGithubCard("🎮", "Fortnite", "Optimisation Fortnite.", "FortniteDebloatInstallation (1).ps1");
-            AddGithubCard("⚡", "PowerPlan", "Plan d’alimentation optimisé.", "E-TWEAKS.ps1");
-            AddGithubCard("⚙️", "Services Optimizer", "Optimise les services Windows.", "services.cmd");
+            AddLinkCard("◆", "AnyDesk", "Télécharger AnyDesk.", "https://anydesk.com/fr/downloads/windows");
+            AddLinkCard("▣", "Discord", "Télécharger Discord.", "https://discord.com/download");
+            AddLinkCard("🎮", "Epic Games", "Télécharger Epic Games Launcher.", "https://store.epicgames.com/fr/download");
+            AddLinkCard("⭕", "Google Chrome", "Télécharger Chrome.", "https://www.google.com/chrome/");
+            AddLinkCard("♫", "Spotify", "Télécharger Spotify.", "https://www.spotify.com/fr/download/windows/");
+            AddLinkCard("●", "UserDiag", "Télécharger UserDiag.", "https://userdiag.com/");
         }
 
         private void ShowInstallWindows()
@@ -158,6 +174,7 @@ namespace E_TWEAKS
         {
             ClearCards("Menu Nvidia", "Optimisations Nvidia", BtnNvidia);
 
+            AddLinkCard("🎛️", "Installer NVCleanstall", "Ouvre la page officielle TechPowerUp.", "https://www.techpowerup.com/download/techpowerup-nvcleanstall/");
             AddGithubCard("⭕", "Disable Telemetry", "Désactive télémétrie NVIDIA.", "mpo disable.bat");
         }
 
