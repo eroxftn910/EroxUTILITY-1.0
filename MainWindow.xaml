@@ -113,7 +113,6 @@
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
-        <!-- SIDEBAR -->
         <Border Grid.Column="0"
                 Background="#070711"
                 BorderBrush="#251544"
@@ -168,7 +167,6 @@
             </Grid>
         </Border>
 
-        <!-- MAIN CONTENT -->
         <Grid Grid.Column="1" Margin="26">
             <Grid.RowDefinitions>
                 <RowDefinition Height="70"/>
@@ -176,7 +174,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- TOP -->
             <Grid Grid.Row="0">
                 <Border Background="#0F0F1D"
                         BorderBrush="#5529A3"
@@ -195,7 +192,6 @@
                 </Border>
             </Grid>
 
-            <!-- HERO -->
             <Border Grid.Row="1"
                     Background="#090914"
                     BorderBrush="#2F1B57"
@@ -209,18 +205,9 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel>
-                        <TextBlock FontSize="52"
-                                   FontWeight="Black"
-                                   Foreground="White"
-                                   Text="BOOSTEZ"/>
-                        <TextBlock FontSize="52"
-                                   FontWeight="Black"
-                                   Foreground="#8B2CFF"
-                                   Text="VOTRE PC"/>
-                        <TextBlock FontSize="52"
-                                   FontWeight="Black"
-                                   Foreground="White"
-                                   Text="AU MAXIMUM"/>
+                        <TextBlock FontSize="52" FontWeight="Black" Foreground="White" Text="BOOSTEZ"/>
+                        <TextBlock FontSize="52" FontWeight="Black" Foreground="#8B2CFF" Text="VOTRE PC"/>
+                        <TextBlock FontSize="52" FontWeight="Black" Foreground="White" Text="AU MAXIMUM"/>
 
                         <TextBlock Text="Plus de FPS. Moins de latence. Une expérience fluide."
                                    Foreground="#CFC9FF"
@@ -237,7 +224,6 @@
                 </Grid>
             </Border>
 
-            <!-- PAGE CONTENT -->
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock x:Name="PageTitle"
@@ -260,7 +246,6 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- RIGHT PANEL -->
         <Border Grid.Column="2"
                 Margin="0,26,26,26"
                 Background="#080812"
@@ -309,18 +294,10 @@
                            FontWeight="Bold"
                            Margin="0,22,0,12"/>
 
-                <TextBlock Text="✅ Optimisation système"
-                           Foreground="White"
-                           Margin="0,8"/>
-                <TextBlock Text="✅ Nettoyage terminé"
-                           Foreground="White"
-                           Margin="0,8"/>
-                <TextBlock Text="✅ Services optimisés"
-                           Foreground="White"
-                           Margin="0,8"/>
-                <TextBlock Text="✅ PowerPlan appliqué"
-                           Foreground="White"
-                           Margin="0,8"/>
+                <TextBlock Text="✅ Optimisation système" Foreground="White" Margin="0,8"/>
+                <TextBlock Text="✅ Nettoyage terminé" Foreground="White" Margin="0,8"/>
+                <TextBlock Text="✅ Services optimisés" Foreground="White" Margin="0,8"/>
+                <TextBlock Text="✅ PowerPlan appliqué" Foreground="White" Margin="0,8"/>
             </StackPanel>
         </Border>
     </Grid>
