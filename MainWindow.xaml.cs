@@ -84,82 +84,97 @@ namespace E_TWEAKS
             };
         }
 
+        private void AddGithubCard(string icon, string title, string subtitle, string githubPath)
+        {
+            Button card = CreateCard(icon, title, subtitle);
+            card.Click += async (_, _) => await RunGithubScript(githubPath);
+            CardsGrid.Children.Add(card);
+        }
+
+        private void AddExeCard(string icon, string title, string subtitle, string githubPath, string fileName)
+        {
+            Button card = CreateCard(icon, title, subtitle);
+            card.Click += async (_, _) => await DownloadAndRunExe(GithubBaseUrl + githubPath, fileName);
+            CardsGrid.Children.Add(card);
+        }
+
+        private void AddActionCard(string icon, string title, string subtitle, RoutedEventHandler click)
+        {
+            Button card = CreateCard(icon, title, subtitle);
+            card.Click += click;
+            CardsGrid.Children.Add(card);
+        }
+
         private void ShowHome()
         {
             ClearCards("Bienvenue sur E-TWEAKS", "Installateurs rapides", BtnHome);
 
-            Button windows = CreateCard("💿", "Installer Windows", "Télécharge et lance Rufus.");
-            windows.Click += InstallerWindows_Click;
-            CardsGrid.Children.Add(windows);
-
-            Button bios = CreateCard("🖥️", "Redémarrer BIOS", "Redémarre directement dans le BIOS/UEFI.");
-            bios.Click += RedemarrerBios_Click;
-            CardsGrid.Children.Add(bios);
-
-            Button services = CreateCard("⚙️", "Services Optimizer", "Optimise les services Windows.");
-            services.Click += async (_, _) => await RunGithubScript("services.cmd");
-            CardsGrid.Children.Add(services);
+            AddActionCard("💿", "Installer Windows", "Télécharge et lance Rufus.", InstallerWindows_Click);
+            AddActionCard("🖥️", "Redémarrer BIOS", "Redémarre directement dans le BIOS/UEFI.", RedemarrerBios_Click);
+            AddGithubCard("⚙️", "Services Optimizer", "Optimise les services Windows.", "services.cmd");
+            AddGithubCard("⚡", "PowerPlan Optimizer", "Applique un plan d’alimentation optimisé.", "E-TWEAKS.ps1");
+            AddGithubCard("🎮", "Fortnite Optimizer", "Optimisation Fortnite.", "FortniteDebloatInstallation (1).ps1");
+            AddExeCard("◉", "NVCleanstall", "Clean install NVIDIA.", "NVCleanstall_1.18.0.exe", "NVCleanstall.exe");
         }
 
         private void ShowWindows()
         {
             ClearCards("Menu Windows", "Installation Windows et optimisations", BtnWindows);
 
-            Button installWindows = CreateCard("💿", "Installer Windows", "Télécharge et lance Rufus depuis GitHub.");
-            installWindows.Click += InstallerWindows_Click;
-            CardsGrid.Children.Add(installWindows);
+            AddActionCard("💿", "Installer Windows", "Télécharge et lance Rufus depuis GitHub.", InstallerWindows_Click);
+            AddActionCard("🖥️", "Redémarrer BIOS", "Redémarre dans le BIOS/UEFI.", RedemarrerBios_Click);
 
-            Button bios = CreateCard("🖥️", "Redémarrer BIOS", "Redémarre dans le BIOS/UEFI.");
-            bios.Click += RedemarrerBios_Click;
-            CardsGrid.Children.Add(bios);
-
-            Button devicesCleanup = CreateCard("🧹", "Devices Cleanup", "Nettoie les anciens périphériques Windows.");
-            devicesCleanup.Click += async (_, _) => await RunGithubScript("Devices-Cleanup.ps1");
-            CardsGrid.Children.Add(devicesCleanup);
+            AddGithubCard("🧹", "Devices Cleanup", "Nettoie les anciens périphériques Windows.", "Devices-Cleanup.ps1");
+            AddGithubCard("🖥️", "Disabling Devices", "Optimisation Device Manager.", "Disabling Devices (Device Manager).bat");
+            AddGithubCard("⌨️", "Keyboard Optimizer", "Optimisations clavier registre.", "MainKeyboard-Optimizations-Registry (2).bat");
+            AddGithubCard("🔌", "USB Power Saving", "Désactive l’économie d’énergie USB.", "USBDisablePowerSaving (1).bat");
+            AddGithubCard("🛡️", "MPO Disable", "Désactive MPO.", "mpo disable.bat");
+            AddGithubCard("🛡️", "MPO Enable", "Réactive MPO.", "mpo enable.bat");
         }
 
         private void ShowJeux()
         {
             ClearCards("Menu Jeux", "Optimisations jeux", BtnJeux);
 
-            Button fortnite = CreateCard("🎮", "Fortnite Optimizer", "Optimisation Fortnite.");
-            fortnite.Click += async (_, _) => await RunGithubScript("FortniteDebloatInstallation (1).ps1");
-            CardsGrid.Children.Add(fortnite);
+            AddGithubCard("🎮", "Fortnite Debloat", "Optimisation Fortnite.", "FortniteDebloatInstallation (1).ps1");
+            AddGithubCard("🎯", "Valorant Optimizer", "Optimisation Valorant.", "ValorantTool-Windows-Optimization.ps1");
+            AddGithubCard("🚗", "FiveM Optimizer", "Optimisation FiveM.", "FiveMTool-Windows-Optimization.ps1");
         }
 
         private void ShowPowerPlan()
         {
             ClearCards("Menu PowerPlan", "Plans d’alimentation", BtnPowerPlan);
 
-            Button power = CreateCard("⚡", "PowerPlan Optimizer", "Applique le plan d’alimentation optimisé.");
-            power.Click += async (_, _) => await RunGithubScript("E-TWEAKS.ps1");
-            CardsGrid.Children.Add(power);
+            AddGithubCard("⚡", "E-TWEAKS PowerPlan", "Applique le PowerPlan E-TWEAKS.", "E-TWEAKS.ps1");
+            AddGithubCard("⚡", "FTN Tool PowerPlan", "Optimisation PowerPlan FTN.", "FTNTool-1.2-Windows-Optimization (1).ps1");
+            AddGithubCard("⚡", "IP State", "Optimisation IP State.", "!P-State 0.bat");
+            AddGithubCard("⚡", "No ECC", "Optimisation ECC.", "!No ECC.bat");
+            AddGithubCard("⚡", "Clock Policy", "Optimisation clock policy.", "!Unrestricted Clock Policy by Cancerogeno.bat");
         }
 
         private void ShowServices()
         {
             ClearCards("Menu Services", "Optimisation services Windows", BtnServices);
 
-            Button services = CreateCard("⚙️", "Services Optimizer", "Optimise les services Windows.");
-            services.Click += async (_, _) => await RunGithubScript("services.cmd");
-            CardsGrid.Children.Add(services);
+            AddGithubCard("⚙️", "Services Optimizer", "Optimise les services Windows.", "services.cmd");
         }
 
         private void ShowNvidia()
         {
             ClearCards("Menu NVIDIA", "Optimisations GPU", BtnNvidia);
 
-            Button nvidia = CreateCard("◉", "NVIDIA Clean Install", "Lance NVCleanstall.");
-            nvidia.Click += async (_, _) => await DownloadAndRunExe(GithubBaseUrl + "NVCleanstall_1.18.0.exe", "NVCleanstall.exe");
-            CardsGrid.Children.Add(nvidia);
+            AddExeCard("◉", "NVCleanstall", "Clean install NVIDIA.", "NVCleanstall_1.18.0.exe", "NVCleanstall.exe");
+            AddExeCard("◉", "NVIDIA Profile Inspector", "Réglages NVIDIA avancés.", "nvidiaProfileInspector.exe", "nvidiaProfileInspector.exe");
+            AddExeCard("◉", "Disable DX11 Navi", "Optimisation GPU.", "disable_dx11navi.exe", "disable_dx11navi.exe");
+            AddGithubCard("◉", "AMD Dwords", "Optimisation AMD.", "AMD Dwords by imribiy.bat");
         }
 
         private void ShowSettings()
         {
             ClearCards("Paramètres", "Options de l’application", BtnSettings);
 
-            Button info = CreateCard("ℹ️", "EroxUTILITY", "Version 2.0.0");
-            CardsGrid.Children.Add(info);
+            AddGithubCard("ℹ️", "System Profile Tasks", "Applique les tâches système.", "SystemProfileTasksDisplayPostProcessing.reg");
+            AddGithubCard("ℹ️", "MPO Disable REG", "Désactive MPO via registre.", "Mpo_disable.reg");
         }
 
         private async void InstallerWindows_Click(object sender, RoutedEventArgs e)
@@ -231,14 +246,20 @@ namespace E_TWEAKS
         {
             try
             {
-                string url = GithubBaseUrl + githubPath;
+                string url = GithubBaseUrl + Uri.EscapeUriString(githubPath);
                 string fileName = Path.GetFileName(githubPath);
                 string tempPath = Path.Combine(Path.GetTempPath(), fileName);
 
                 using HttpClient client = new HttpClient();
-                string script = await client.GetStringAsync(url);
 
-                await File.WriteAllTextAsync(tempPath, script);
+                if (githubPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    await DownloadAndRunExe(url, fileName);
+                    return;
+                }
+
+                byte[] data = await client.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(tempPath, data);
 
                 if (githubPath.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
                 {
@@ -246,6 +267,16 @@ namespace E_TWEAKS
                     {
                         FileName = "powershell.exe",
                         Arguments = $"-ExecutionPolicy Bypass -File \"{tempPath}\"",
+                        UseShellExecute = true,
+                        Verb = "runas"
+                    });
+                }
+                else if (githubPath.EndsWith(".reg", StringComparison.OrdinalIgnoreCase))
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "regedit.exe",
+                        Arguments = $"/s \"{tempPath}\"",
                         UseShellExecute = true,
                         Verb = "runas"
                     });
