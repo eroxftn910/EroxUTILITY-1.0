@@ -88,7 +88,7 @@ namespace E_TWEAKS
         {
             ClearCards("Bienvenue sur E-TWEAKS", "Installateurs rapides", BtnHome);
 
-            Button windows = CreateCard("💿", "Installer Windows", "Télécharge et lance Rufus pour créer une clé USB Windows.");
+            Button windows = CreateCard("💿", "Installer Windows", "Télécharge et lance Rufus.");
             windows.Click += InstallerWindows_Click;
             CardsGrid.Children.Add(windows);
 
@@ -97,7 +97,7 @@ namespace E_TWEAKS
             CardsGrid.Children.Add(bios);
 
             Button services = CreateCard("⚙️", "Services Optimizer", "Optimise les services Windows.");
-            services.Click += async (_, _) => await RunGithubScript("services/services.cmd");
+            services.Click += async (_, _) => await RunGithubScript("services.cmd");
             CardsGrid.Children.Add(services);
         }
 
@@ -105,7 +105,7 @@ namespace E_TWEAKS
         {
             ClearCards("Menu Windows", "Installation Windows et optimisations", BtnWindows);
 
-            Button installWindows = CreateCard("💿", "Installer Windows", "Ouvre Rufus automatiquement depuis GitHub.");
+            Button installWindows = CreateCard("💿", "Installer Windows", "Télécharge et lance Rufus depuis GitHub.");
             installWindows.Click += InstallerWindows_Click;
             CardsGrid.Children.Add(installWindows);
 
@@ -114,7 +114,7 @@ namespace E_TWEAKS
             CardsGrid.Children.Add(bios);
 
             Button devicesCleanup = CreateCard("🧹", "Devices Cleanup", "Nettoie les anciens périphériques Windows.");
-            devicesCleanup.Click += async (_, _) => await RunGithubScript("Windows/Devices-Cleanup.ps1");
+            devicesCleanup.Click += async (_, _) => await RunGithubScript("Devices-Cleanup.ps1");
             CardsGrid.Children.Add(devicesCleanup);
         }
 
@@ -123,7 +123,7 @@ namespace E_TWEAKS
             ClearCards("Menu Jeux", "Optimisations jeux", BtnJeux);
 
             Button fortnite = CreateCard("🎮", "Fortnite Optimizer", "Optimisation Fortnite.");
-            fortnite.Click += async (_, _) => await RunGithubScript("Jeux/FortniteDebloatInstallation (1).ps1");
+            fortnite.Click += async (_, _) => await RunGithubScript("FortniteDebloatInstallation (1).ps1");
             CardsGrid.Children.Add(fortnite);
         }
 
@@ -132,7 +132,7 @@ namespace E_TWEAKS
             ClearCards("Menu PowerPlan", "Plans d’alimentation", BtnPowerPlan);
 
             Button power = CreateCard("⚡", "PowerPlan Optimizer", "Applique le plan d’alimentation optimisé.");
-            power.Click += async (_, _) => await RunGithubScript("PowerPlan/powerplan.cmd");
+            power.Click += async (_, _) => await RunGithubScript("E-TWEAKS.ps1");
             CardsGrid.Children.Add(power);
         }
 
@@ -141,7 +141,7 @@ namespace E_TWEAKS
             ClearCards("Menu Services", "Optimisation services Windows", BtnServices);
 
             Button services = CreateCard("⚙️", "Services Optimizer", "Optimise les services Windows.");
-            services.Click += async (_, _) => await RunGithubScript("services/services.cmd");
+            services.Click += async (_, _) => await RunGithubScript("services.cmd");
             CardsGrid.Children.Add(services);
         }
 
@@ -149,8 +149,8 @@ namespace E_TWEAKS
         {
             ClearCards("Menu NVIDIA", "Optimisations GPU", BtnNvidia);
 
-            Button nvidia = CreateCard("◉", "NVIDIA Optimizer", "Optimisation NVIDIA.");
-            nvidia.Click += async (_, _) => await RunGithubScript("GPU/nvidia.cmd");
+            Button nvidia = CreateCard("◉", "NVIDIA Clean Install", "Lance NVCleanstall.");
+            nvidia.Click += async (_, _) => await DownloadAndRunExe(GithubBaseUrl + "NVCleanstall_1.18.0.exe", "NVCleanstall.exe");
             CardsGrid.Children.Add(nvidia);
         }
 
@@ -165,7 +165,7 @@ namespace E_TWEAKS
         private async void InstallerWindows_Click(object sender, RoutedEventArgs e)
         {
             await DownloadAndRunExe(
-                "https://raw.githubusercontent.com/eroxftn910/EroxUTILITY-1.0/main/rufus-4.14.exe",
+                "https://raw.githubusercontent.com/eroxftn910/EroxUTILITY-1.0/main/rufus.exe",
                 "rufus.exe"
             );
         }
@@ -236,12 +236,12 @@ namespace E_TWEAKS
                 string tempPath = Path.Combine(Path.GetTempPath(), fileName);
 
                 using HttpClient client = new HttpClient();
+                string script = await client.GetStringAsync(url);
+
+                await File.WriteAllTextAsync(tempPath, script);
 
                 if (githubPath.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
                 {
-                    string script = await client.GetStringAsync(url);
-                    await File.WriteAllTextAsync(tempPath, script);
-
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = "powershell.exe",
@@ -252,9 +252,6 @@ namespace E_TWEAKS
                 }
                 else
                 {
-                    string script = await client.GetStringAsync(url);
-                    await File.WriteAllTextAsync(tempPath, script);
-
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = tempPath,
