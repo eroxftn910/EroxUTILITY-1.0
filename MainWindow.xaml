@@ -8,14 +8,7 @@
         Background="#05050A">
 
     <Window.Resources>
-
-        <SolidColorBrush x:Key="Bg" Color="#05050A"/>
-        <SolidColorBrush x:Key="Panel" Color="#0B0B14"/>
-        <SolidColorBrush x:Key="Card" Color="#12121E"/>
-        <SolidColorBrush x:Key="CardHover" Color="#1C1230"/>
-        <SolidColorBrush x:Key="Purple" Color="#8B2CFF"/>
         <SolidColorBrush x:Key="Purple2" Color="#B15CFF"/>
-        <SolidColorBrush x:Key="TextMain" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="TextSub" Color="#A9A4C7"/>
 
         <Style x:Key="MenuButton" TargetType="Button">
@@ -32,14 +25,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="bd"
-                                CornerRadius="10"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="1">
-                            <ContentPresenter VerticalAlignment="Center"
-                                              HorizontalAlignment="Left"
-                                              Margin="{TemplateBinding Padding}"/>
+                        <Border x:Name="bd" CornerRadius="10" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1">
+                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -69,12 +56,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="card"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="16"
-                                Padding="22">
+                        <Border x:Name="card" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="16" Padding="22">
                             <ContentPresenter/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -83,27 +65,15 @@
                                 <Setter TargetName="card" Property="BorderBrush" Value="#8B2CFF"/>
                                 <Setter TargetName="card" Property="Effect">
                                     <Setter.Value>
-                                        <DropShadowEffect Color="#8B2CFF"
-                                                          BlurRadius="25"
-                                                          ShadowDepth="0"
-                                                          Opacity="0.55"/>
+                                        <DropShadowEffect Color="#8B2CFF" BlurRadius="25" ShadowDepth="0" Opacity="0.55"/>
                                     </Setter.Value>
                                 </Setter>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="card" Property="RenderTransform">
-                                    <Setter.Value>
-                                        <ScaleTransform ScaleX="0.97" ScaleY="0.97"/>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter TargetName="card" Property="RenderTransformOrigin" Value="0.5,0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
 
     <Grid>
@@ -113,57 +83,30 @@
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0"
-                Background="#070711"
-                BorderBrush="#251544"
-                BorderThickness="0,0,1,0">
-
+        <Border Grid.Column="0" Background="#070711" BorderBrush="#251544" BorderThickness="0,0,1,0">
             <Grid>
                 <StackPanel>
-                    <Image Source="Assets/logo.png"
-                           Width="105"
-                           Height="105"
-                           Margin="0,28,0,20"/>
+                    <Image Source="Assets/logo.png" Width="105" Height="105" Margin="0,28,0,20"/>
 
                     <Button x:Name="BtnHome" Style="{StaticResource ActiveMenuButton}" Click="BtnHome_Click" Content="⌂  ACCUEIL"/>
                     <Button x:Name="BtnWindows" Style="{StaticResource MenuButton}" Click="BtnWindows_Click" Content="▦  WINDOWS"/>
+                    <Button x:Name="BtnInstallWindows" Style="{StaticResource MenuButton}" Click="BtnInstallWindows_Click" Content="💿  INSTALL WINDOWS"/>
                     <Button x:Name="BtnJeux" Style="{StaticResource MenuButton}" Click="BtnJeux_Click" Content="🎮  JEUX"/>
                     <Button x:Name="BtnPowerPlan" Style="{StaticResource MenuButton}" Click="BtnPowerPlan_Click" Content="⚡  POWERPLAN"/>
                     <Button x:Name="BtnServices" Style="{StaticResource MenuButton}" Click="BtnServices_Click" Content="⚙  SERVICES"/>
                     <Button x:Name="BtnNvidia" Style="{StaticResource MenuButton}" Click="BtnNvidia_Click" Content="◉  NVIDIA"/>
                     <Button x:Name="BtnSettings" Style="{StaticResource MenuButton}" Click="BtnSettings_Click" Content="⚙  PARAMÈTRES"/>
 
-                    <Border Margin="18,25,18,0"
-                            Background="#0F0F1D"
-                            BorderBrush="#3A226B"
-                            BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="16">
+                    <Border Margin="18,25,18,0" Background="#0F0F1D" BorderBrush="#3A226B" BorderThickness="1" CornerRadius="14" Padding="16">
                         <StackPanel>
-                            <TextBlock Text="ÉTAT DU SYSTÈME"
-                                       Foreground="#CFC9FF"
-                                       FontWeight="Bold"
-                                       FontSize="12"/>
-                            <TextBlock Text="100%"
-                                       Foreground="White"
-                                       FontSize="38"
-                                       FontWeight="Black"
-                                       Margin="0,20,0,0"
-                                       HorizontalAlignment="Center"/>
-                            <TextBlock Text="OPTIMISÉ"
-                                       Foreground="#B15CFF"
-                                       FontWeight="Bold"
-                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="ÉTAT DU SYSTÈME" Foreground="#CFC9FF" FontWeight="Bold" FontSize="12"/>
+                            <TextBlock Text="100%" Foreground="White" FontSize="38" FontWeight="Black" Margin="0,20,0,0" HorizontalAlignment="Center"/>
+                            <TextBlock Text="OPTIMISÉ" Foreground="#B15CFF" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
 
-                <TextBlock Text="EroxUTILITY 2.0.0"
-                           Foreground="#8D86B8"
-                           FontSize="13"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Bottom"
-                           Margin="0,0,0,22"/>
+                <TextBlock Text="EroxUTILITY 2.0.0" Foreground="#8D86B8" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,22"/>
             </Grid>
         </Border>
 
@@ -174,30 +117,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0">
-                <Border Background="#0F0F1D"
-                        BorderBrush="#5529A3"
-                        BorderThickness="1"
-                        CornerRadius="12"
-                        HorizontalAlignment="Left"
-                        Padding="18,0"
-                        Height="42"
-                        VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Ellipse Width="10" Height="10" Fill="#31E981" Margin="0,0,10,0"/>
-                        <TextBlock Text="SYSTÈME OPTIMISÉ"
-                                   Foreground="#B15CFF"
-                                   FontWeight="Bold"/>
-                    </StackPanel>
-                </Border>
-            </Grid>
+            <Border Grid.Row="0" Background="#0F0F1D" BorderBrush="#5529A3" BorderThickness="1" CornerRadius="12" HorizontalAlignment="Left" Padding="18,0" Height="42" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse Width="10" Height="10" Fill="#31E981" Margin="0,0,10,0"/>
+                    <TextBlock Text="SYSTÈME OPTIMISÉ" Foreground="#B15CFF" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
 
-            <Border Grid.Row="1"
-                    Background="#090914"
-                    BorderBrush="#2F1B57"
-                    BorderThickness="1"
-                    CornerRadius="18"
-                    Padding="28">
+            <Border Grid.Row="1" Background="#090914" BorderBrush="#2F1B57" BorderThickness="1" CornerRadius="18" Padding="28">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -207,93 +134,35 @@
                     <StackPanel>
                         <TextBlock FontSize="52" FontWeight="Black" Foreground="White" Text="BOOSTEZ"/>
                         <TextBlock FontSize="52" FontWeight="Black" Foreground="#8B2CFF" Text="VOTRE PC"/>
-                        <TextBlock FontSize="52" FontWeight="Black" Foreground="White" Text="AU MAXIMUM"/>
-
-                        <TextBlock Text="Plus de FPS. Moins de latence. Une expérience fluide."
-                                   Foreground="#CFC9FF"
-                                   FontSize="16"
-                                   Margin="0,12,0,0"/>
                     </StackPanel>
 
-                    <Image Grid.Column="1"
-                           Source="Assets/logo.png"
-                           Width="180"
-                           Height="180"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                    <Image Grid.Column="1" Source="Assets/logo.png" Width="180" Height="180" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <TextBlock x:Name="PageTitle"
-                               Text="Bienvenue sur E-TWEAKS"
-                               Foreground="White"
-                               FontSize="28"
-                               FontWeight="Black"
-                               Margin="0,24,0,4"/>
-
-                    <TextBlock x:Name="PageSubtitle"
-                               Text="Installateurs rapides"
-                               Foreground="#A9A4C7"
-                               FontSize="15"
-                               Margin="0,0,0,18"/>
-
-                    <UniformGrid x:Name="CardsGrid"
-                                 Columns="3"
-                                 Rows="0"/>
+                    <TextBlock x:Name="PageTitle" Text="Bienvenue sur E-TWEAKS" Foreground="White" FontSize="28" FontWeight="Black" Margin="0,24,0,4"/>
+                    <TextBlock x:Name="PageSubtitle" Text="Installateurs rapides" Foreground="#A9A4C7" FontSize="15" Margin="0,0,0,18"/>
+                    <UniformGrid x:Name="CardsGrid" Columns="3" Rows="0"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>
 
-        <Border Grid.Column="2"
-                Margin="0,26,26,26"
-                Background="#080812"
-                BorderBrush="#27164B"
-                BorderThickness="1"
-                CornerRadius="18"
-                Padding="20">
-
+        <Border Grid.Column="2" Margin="0,26,26,26" Background="#080812" BorderBrush="#27164B" BorderThickness="1" CornerRadius="18" Padding="20">
             <StackPanel>
-                <Image Source="Assets/logo.png"
-                       Width="125"
-                       Height="125"
-                       Margin="0,12,0,16"/>
+                <Image Source="Assets/logo.png" Width="125" Height="125" Margin="0,12,0,16"/>
+                <TextBlock Text="EroxFTN" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Text="eroxtfn." Foreground="#A9A4C7" FontSize="14" HorizontalAlignment="Center" Margin="0,4,0,25"/>
 
-                <TextBlock Text="EroxFTN"
-                           Foreground="White"
-                           FontSize="24"
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"/>
-
-                <TextBlock Text="eroxtfn."
-                           Foreground="#A9A4C7"
-                           FontSize="14"
-                           HorizontalAlignment="Center"
-                           Margin="0,4,0,25"/>
-
-                <Border Background="#0F0F1D"
-                        BorderBrush="#2F1B57"
-                        BorderThickness="1"
-                        CornerRadius="12"
-                        Padding="16"
-                        Margin="0,0,0,14">
+                <Border Background="#0F0F1D" BorderBrush="#2F1B57" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,14">
                     <StackPanel>
-                        <TextBlock Text="Membre depuis"
-                                   Foreground="#CFC9FF"
-                                   FontWeight="Bold"/>
-                        <TextBlock Text="22 mars 2026"
-                                   Foreground="White"
-                                   Margin="0,8,0,0"/>
+                        <TextBlock Text="Membre depuis" Foreground="#CFC9FF" FontWeight="Bold"/>
+                        <TextBlock Text="22 mars 2026" Foreground="White" Margin="0,8,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <TextBlock Text="ACTIVITÉ RÉCENTE"
-                           Foreground="#B15CFF"
-                           FontSize="16"
-                           FontWeight="Bold"
-                           Margin="0,22,0,12"/>
-
+                <TextBlock Text="ACTIVITÉ RÉCENTE" Foreground="#B15CFF" FontSize="16" FontWeight="Bold" Margin="0,22,0,12"/>
                 <TextBlock Text="✅ Optimisation système" Foreground="White" Margin="0,8"/>
                 <TextBlock Text="✅ Nettoyage terminé" Foreground="White" Margin="0,8"/>
                 <TextBlock Text="✅ Services optimisés" Foreground="White" Margin="0,8"/>
